@@ -22,7 +22,7 @@ function scene:create(event)
 	background.y = 0
 	sceneGroup:insert(background)
 
-	local title = display.newImageRect('src/assets/images/HomeTitle.png', display.contentWidth, display.contentWidth)
+	local title = display.newImageRect('src/assets/texts/HomeTitle.png', display.contentWidth, display.contentWidth)
 	title.x = display.contentWidth * 1/2
 	title.y = display.contentHeight * 13/20
 	title:scale(0.6, 0.4)
