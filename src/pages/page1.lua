@@ -71,6 +71,8 @@ local function atrairObjeto()
         local direcaoX = metal.x - magnetita.x
         local direcaoY = metal.y - magnetita.y
         magnetita:applyForce(direcaoX * forca, direcaoY * forca, magnetita.x, magnetita.y)
+    else
+        magnetita:setLinearVelocity(0, 0)
     end
 end
 
@@ -214,6 +216,7 @@ function scene:hide(event)
         rock1:removeEventListener("touch", onRock1Touch )
         rock2:removeEventListener("touch", onRock2Touch )
         rock3:removeEventListener("touch", onRock3Touch )
+        Runtime:removeEventListener("enterFrame", atrairObjeto)
     elseif (phase == "did") then
 
     end
