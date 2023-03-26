@@ -5,6 +5,10 @@ local backButton
 local forwardButton
 local background
 
+local currentIndex = 1
+local images = {}
+
+
 local function onBackPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
         composer.gotoScene("src.pages.page4", "fade")
@@ -21,6 +25,24 @@ local function onNextPage(self, event)
     end
 end
 
+local function changePowderImage(event)
+    print("SHAKE")
+    local threshold = 1.2
+    local xGravity = event.xGravity
+    local yGravity = event.yGravity
+    local zGravity = event.zGravity
+    local magnitude = math.sqrt(xGravity*xGravity + yGravity*yGravity + zGravity*zGravity)
+    if magnitude > threshold then
+        currentIndex = currentIndex + 1
+        if currentIndex > #images then
+            currentIndex = 1
+        end
+        -- exibir a nova imagem
+        for i = 1, #images do
+            images[i].isVisible = (i == currentIndex)
+        end
+    end
+end
 
 function scene:create(event)
     local sceneGroup = self.view
@@ -45,6 +67,44 @@ function scene:create(event)
     text.y = display.contentHeight * 0.67
     sceneGroup:insert(text)
 
+    magnetPowder01 = display.newImage('src/assets/images/magnetPowder01.png', display.contentWidth,
+        display.contentWidth)
+    magnetPowder01.x = display.contentWidth * 0.5
+    magnetPowder01.y = display.contentHeight * 0.3
+    sceneGroup:insert(magnetPowder01)
+    table.insert(images, magnetPowder01)
+
+    magnetPowder02 = display.newImage('src/assets/images/magnetPowder02.png', display.contentWidth,
+        display.contentWidth)
+    magnetPowder02.x = display.contentWidth * 0.5
+    magnetPowder02.y = display.contentHeight * 0.3
+    magnetPowder02.isVisible = false
+    sceneGroup:insert(magnetPowder02)
+    table.insert(images, magnetPowder02)
+
+    magnetPowder03 = display.newImage('src/assets/images/magnetPowder03.png', display.contentWidth,
+        display.contentWidth)
+    magnetPowder03.x = display.contentWidth * 0.5
+    magnetPowder03.y = display.contentHeight * 0.3
+    magnetPowder03.isVisible = false
+    sceneGroup:insert(magnetPowder03)
+    table.insert(images, magnetPowder03)
+
+    magnetPowder04 = display.newImage('src/assets/images/magnetPowder04.png', display.contentWidth,
+        display.contentWidth)
+    magnetPowder04.x = display.contentWidth * 0.5
+    magnetPowder04.y = display.contentHeight * 0.3
+    magnetPowder04.isVisible = false
+    sceneGroup:insert(magnetPowder04)
+    table.insert(images, magnetPowder04)
+
+    magnetPowder05 = display.newImage('src/assets/images/magnetPowder05.png', display.contentWidth,
+        display.contentWidth)
+    magnetPowder05.x = display.contentWidth * 0.5
+    magnetPowder05.y = display.contentHeight * 0.3
+    magnetPowder05.isVisible = false
+    sceneGroup:insert(magnetPowder05)
+    table.insert(images, magnetPowder05)
 
     backButton = display.newImage('src/assets/buttons/lightButtonLeft.png', display.contentWidth,
         display.contentWidth)
@@ -71,6 +131,8 @@ function scene:show(event)
 
         forwardButton.touch = onNextPage
         forwardButton:addEventListener("touch", forwardButton)
+        system.setAccelerometerInterval( 100 )
+        Runtime:addEventListener("accelerometer", changePowderImage)
     end
 end
 
@@ -82,6 +144,7 @@ function scene:hide(event)
         backButton:removeEventListener("touch", backButton)
         forwardButton:removeEventListener("touch", forwardButton)
         background:removeEventListener("tap", background)
+        Runtime:removeEventListener("accelerometer", changePowderImage)
     elseif (phase == "did") then
 
     end
