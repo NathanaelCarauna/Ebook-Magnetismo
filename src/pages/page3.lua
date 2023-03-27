@@ -10,6 +10,10 @@ local forwardButton
 local background
 local magnet
 local knife
+local newMagnet1
+local newMagnet2
+local newMagnet3
+local newMagnet4
 
 local function onBackPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
@@ -43,7 +47,7 @@ local function onDragObj(event)
             if magnet.width == nil then
                 return true
             end
-            
+
             -- verificar se o objeto está sobreposto a outro objeto
             if object.x > magnet.x - magnet.width / 2 and
                 object.x < magnet.x + magnet.width / 2 and
@@ -53,21 +57,10 @@ local function onDragObj(event)
                 print("sobreposto")
                 physics.removeBody(magnet)
                 magnet:removeSelf()
-
-                local newMagnet = display.newImage('src/assets/images/squareMagnet.png', display.contentWidth,
-                    display.contentWidth)
-                newMagnet.x = magnet.x
-                newMagnet.y = magnet.y + 26
-                newMagnet:scale(1, 0.5)
-
-                local newMagnet2 = display.newImage('src/assets/images/squareMagnet.png', display.contentWidth,
-                    display.contentWidth)
-                newMagnet2.x = magnet.x
-                newMagnet2.y = magnet.y - 26
-                newMagnet2:scale(1, 0.5)
-
-                self.view:insert(knife)
-
+                newMagnet1.isVisible = true
+                newMagnet2.isVisible = true
+                knife.isVisible = false
+                knife.isVisible = true
             end
         elseif event.phase == "ended" or event.phase == "cancelled" then
             display.getCurrentStage():setFocus(nil)
@@ -108,6 +101,48 @@ function scene:create(event)
     sceneGroup:insert(magnet)
     physics.addBody(magnet, "dinamic", { radius = 50, friction = 1 })
     magnet.isFixedRotation = true
+
+    newMagnet1 = display.newImage('src/assets/images/squareMagnet.png', display.contentWidth,
+        display.contentWidth)
+    newMagnet1.x = magnet.x
+    newMagnet1.y = magnet.y + 26
+    newMagnet1.isVisible = false
+    newMagnet1:scale(1, 0.5)
+
+    newMagnet2 = display.newImage('src/assets/images/squareMagnet.png', display.contentWidth,
+        display.contentWidth)
+    newMagnet2.x = magnet.x
+    newMagnet2.y = magnet.y - 26
+    newMagnet2.isVisible = false
+    newMagnet2:scale(1, 0.5)
+
+    newMagnet3 = display.newImage('src/assets/images/squareMagnet.png', display.contentWidth,
+        display.contentWidth)
+    newMagnet3.x = newMagnet1.x
+    newMagnet3.y = newMagnet1.y + 26
+    newMagnet3.isVisible = false
+    newMagnet3:scale(1, 0.25)
+
+    newMagnet4 = display.newImage('src/assets/images/squareMagnet.png', display.contentWidth,
+        display.contentWidth)
+    newMagnet4.x = newMagnet1.x
+    newMagnet4.y = newMagnet1.y - 26
+    newMagnet4.isVisible = false
+    newMagnet4:scale(1, 0.25)
+
+    newMagnet5 = display.newImage('src/assets/images/squareMagnet.png', display.contentWidth,
+        display.contentWidth)
+    newMagnet5.x = newMagnet2.x
+    newMagnet5.y = newMagnet2.y - 26
+    newMagnet5.isVisible = false
+    newMagnet5:scale(1, 0.25)
+
+    newMagnet6 = display.newImage('src/assets/images/squareMagnet.png', display.contentWidth,
+        display.contentWidth)
+    newMagnet6.x = newMagnet2.x
+    newMagnet6.y = newMagnet2.y + 26
+    newMagnet6.isVisible = false
+    newMagnet6:scale(1, 0.25)
 
     knife = display.newImage('src/assets/images/Knife.png', display.contentWidth,
         display.contentWidth)
