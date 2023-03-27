@@ -27,23 +27,55 @@ local function onNextPage(self, event)
     end
 end
 
-local function onDragKnife(event) 
-    onDragObj(event, knife)
-end
+local function onDragObj(event)
+    local object = event.target
 
-local function onDragObj(event, obj)
     if event.phase == "began" then
-        display.getCurrentStage():setFocus(obj)
-        obj.isFocus = true
-        obj.deltaX = event.x - obj.x
-        obj.deltaY = event.y - obj.y
-    elseif event.phase == "moved" then
-        obj.x = event.x - obj.deltaX
-        obj.y = event.y - obj.deltaY
-    elseif event.phase == "ended" or event.phase == "cancelled" then
-        display.getCurrentStage():setFocus(nil)
-        obj.isFocus = false
+        display.getCurrentStage():setFocus(object)
+        object.isFocus = true
+        object.x0 = event.x - object.x
+        object.y0 = event.y - object.y
+    elseif object.isFocus then
+        if event.phase == "moved" then
+            object.x = event.x - object.x0
+            object.y = event.y - object.y0
+
+            if magnet.width == nil then
+                return true
+            end
+            
+            -- verificar se o objeto está sobreposto a outro objeto
+            if object.x > magnet.x - magnet.width / 2 and
+                object.x < magnet.x + magnet.width / 2 and
+                object.y > magnet.y - magnet.height / 2 and
+                object.y < magnet.y + magnet.height / 2 then
+                -- remover objeto sobreposto e adicionar novos objetos
+                print("sobreposto")
+                physics.removeBody(magnet)
+                magnet:removeSelf()
+
+                local newMagnet = display.newImage('src/assets/images/squareMagnet.png', display.contentWidth,
+                    display.contentWidth)
+                newMagnet.x = magnet.x
+                newMagnet.y = magnet.y + 26
+                newMagnet:scale(1, 0.5)
+
+                local newMagnet2 = display.newImage('src/assets/images/squareMagnet.png', display.contentWidth,
+                    display.contentWidth)
+                newMagnet2.x = magnet.x
+                newMagnet2.y = magnet.y - 26
+                newMagnet2:scale(1, 0.5)
+
+                self.view:insert(knife)
+
+            end
+        elseif event.phase == "ended" or event.phase == "cancelled" then
+            display.getCurrentStage():setFocus(nil)
+            object.isFocus = false
+        end
     end
+
+    return true
 end
 
 function scene:create(event)
@@ -78,12 +110,13 @@ function scene:create(event)
     magnet.isFixedRotation = true
 
     knife = display.newImage('src/assets/images/Knife.png', display.contentWidth,
-        display.contentWidth)    
+        display.contentWidth)
     knife.x = display.contentWidth * 0.2
     knife.y = display.contentHeight * 0.6
     knife:scale(-0.03, 0.03)
+    knife:toFront()
     sceneGroup:insert(knife)
-    physics.addBody(knife, "dinamic", { isSensor=true, radius=10})
+    physics.addBody(knife, "dinamic", { isSensor = true, radius = 10 })
     knife.isFixedRotation = true
 
     backButton = display.newImage('src/assets/buttons/blackButtonLeft.png', display.contentWidth,
@@ -111,7 +144,8 @@ function scene:show(event)
 
         forwardButton.touch = onNextPage
         forwardButton:addEventListener("touch", forwardButton)
-        knife:addEventListener("touch", onDragKnife)
+        knife:addEventListener("touch", onDragObj)
+        magnet:addEventListener("touch", onDragObj)
     end
 end
 
@@ -123,7 +157,8 @@ function scene:hide(event)
         backButton:removeEventListener("touch", backButton)
         forwardButton:removeEventListener("touch", forwardButton)
         background:removeEventListener("tap", background)
-        knife:removeEventListener("touch", onDragKnife)
+        knife:removeEventListener("touch", onDragObj)
+        magnet:removeEventListener("touch", onDragObj)
     elseif (phase == "did") then
 
     end
