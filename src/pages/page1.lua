@@ -208,7 +208,10 @@ function scene:hide(event)
     local sceneGroup = self.view
     local phase = event.phase
 
-    if (phase == "will") then
+    if (phase == "will") then        
+        physics.stop()
+
+        Runtime:removeEventListener("enterFrame", atrairObjeto)
         backButton:removeEventListener("touch", backButton)
         forwardButton:removeEventListener("touch", forwardButton)
         background:removeEventListener("tap", background)
@@ -217,10 +220,8 @@ function scene:hide(event)
         rock1:removeEventListener("touch", onRock1Touch )
         rock2:removeEventListener("touch", onRock2Touch )
         rock3:removeEventListener("touch", onRock3Touch )
-        Runtime:removeEventListener("enterFrame", atrairObjeto)
 
-        physics.stop()
-        physics.removeBody( metal )
+        
     elseif (phase == "did") then
 
     end

@@ -2,7 +2,7 @@ local composer = require("composer")
 local physics = require("physics")
 
 physics.start()
-physics.setGravity( 0, 0 )
+physics.setGravity(0, 0)
 local ATTRACTION_DISTANCE = 150
 local direction = -1
 
@@ -42,18 +42,18 @@ function onDragObj(event, obj)
         obj.isFocus = true
         obj.deltaX = event.x - obj.x
         obj.deltaY = event.y - obj.y
-      elseif event.phase == "moved" then
+    elseif event.phase == "moved" then
         obj.x = event.x - obj.deltaX
         obj.y = event.y - obj.deltaY
-      elseif event.phase == "ended" or event.phase == "cancelled" then
+    elseif event.phase == "ended" or event.phase == "cancelled" then
         display.getCurrentStage():setFocus(nil)
         obj.isFocus = false
-      end
+    end
 end
 
 local function onTurnButtonTouch(event)
     if event.phase == "ended" then
-        -- Rotacione a imagem em 90 graus quando o botão for clicado
+        -- Rotacione o ima fixado em 90 graus quando o botão for clicado
         fixedMagnet.rotation = fixedMagnet.rotation + 180
         if direction == -1 then
             direction = 1
@@ -67,7 +67,6 @@ end
 
 local function atrairObjeto()
     local distancia = math.sqrt((magnet.x - fixedMagnet.x) ^ 2 + (magnet.y - fixedMagnet.y) ^ 2)
-    print("Distancia: ", distancia)
     if distancia < ATTRACTION_DISTANCE then
         local forca = direction * 200 * (100 - distancia)
         local direcaoX = fixedMagnet.x - magnet.x
@@ -78,13 +77,13 @@ local function atrairObjeto()
     end
 end
 
-local function onCollision( event )
-    if ( event.phase == "began" ) then
-        magnet:removeEventListener( "enterFrame", atrairObjeto )
+local function onCollision(event)
+    if (event.phase == "began") then
+        magnet:removeEventListener("enterFrame", atrairObjeto)
         magnet.x = fixedMagnet.x
         magnet.y = fixedMagnet.y
-    elseif ( event.phase == "ended" ) then
-        magnet:addEventListener( "enterFrame", atrairObjeto )
+    elseif (event.phase == "ended") then
+        magnet:addEventListener("enterFrame", atrairObjeto)
     end
 end
 
@@ -100,14 +99,14 @@ function scene:create(event)
     sceneGroup:insert(background)
 
     local instructionsText = display.newImage('src/assets/texts/page2Instructions.png', display.actualContentWidth,
-    display.actualContentHeight)
+        display.actualContentHeight)
     instructionsText.x = display.contentWidth * 0.32
     instructionsText.y = display.contentHeight * 0.02
     sceneGroup:insert(instructionsText)
 
     local text = display.newImage('src/assets/texts/page2Text.png', display.actualContentWidth,
-    display.actualContentHeight)
-    text.x = display.contentWidth * 5/10
+        display.actualContentHeight)
+    text.x = display.contentWidth * 5 / 10
     text.y = display.contentHeight * 0.67
     text:scale(0.9, 0.9)
     sceneGroup:insert(text)
@@ -120,19 +119,13 @@ function scene:create(event)
 
     fixedMagnet = display.newImage('src/assets/images/squareMagnet.png', display.contentWidth,
         display.contentWidth)
-    fixedMagnet.x = display.contentWidth * 0.7
-    fixedMagnet.y = display.contentHeight * 0.2    
     sceneGroup:insert(fixedMagnet)
-    local fixedMagnetBoddy = physics.addBody(fixedMagnet, "static", { radius = 52, friction= 1})
-    fixedMagnet.isFixedRotation = true
+
 
     magnet = display.newImage('src/assets/images/squareMagnet.png', display.contentWidth,
         display.contentWidth)
-    magnet.x = display.contentWidth * 0.2
-    magnet.y = display.contentHeight * 0.2
     sceneGroup:insert(magnet)
-    local magnetBoddy = physics.addBody(magnet, "dinamic", { radius = 50, friction= 1 })
-    magnet.isFixedRotation = true
+
 
     backButton = display.newImage('src/assets/buttons/lightButtonLeft.png', display.contentWidth,
         display.contentWidth)
@@ -157,11 +150,23 @@ function scene:show(event)
         backButton.touch = onBackPage
         backButton:addEventListener("touch", backButton)
 
+        --Reinicia posições
+        fixedMagnet.x = display.contentWidth * 0.7
+        fixedMagnet.y = display.contentHeight * 0.2
+        magnet.x = display.contentWidth * 0.2
+        magnet.y = display.contentHeight * 0.2
+
+        physics.start()
+        physics.addBody(fixedMagnet, "static", { radius = 52, friction = 1 })
+        fixedMagnet.isFixedRotation = true
+        physics.addBody(magnet, "dinamic", { radius = 50, friction = 1 })
+        magnet.isFixedRotation = true
+
         forwardButton.touch = onNextPage
         forwardButton:addEventListener("touch", forwardButton)
-        magnet:addEventListener( "collision", onCollision )
+        magnet:addEventListener("collision", onCollision)
         magnet:addEventListener("touch", onMagnetTouch)
-        turnButton:addEventListener( "touch", onTurnButtonTouch )
+        turnButton:addEventListener("touch", onTurnButtonTouch)
         Runtime:addEventListener("enterFrame", atrairObjeto)
     end
 end
@@ -171,12 +176,15 @@ function scene:hide(event)
     local phase = event.phase
 
     if (phase == "will") then
+        Runtime:removeEventListener("enterFrame", atrairObjeto)
         backButton:removeEventListener("touch", backButton)
         forwardButton:removeEventListener("touch", forwardButton)
         background:removeEventListener("tap", background)
         magnet:removeEventListener("touch", onMagnetTouch)
-        magnet:removeEventListener( "collision", onCollision )
-        turnButton:removeEventListener( "touch", onTurnButtonTouch )
+        magnet:removeEventListener("collision", onCollision)
+        turnButton:removeEventListener("touch", onTurnButtonTouch)
+        
+        physics.stop()
     elseif (phase == "did") then
 
     end
