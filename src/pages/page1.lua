@@ -131,6 +131,7 @@ function scene:create(event)
     magnetita:scale(1, 1)
     sceneGroup:insert(magnetita)
     physics.addBody(magnetita, "dinamic", { density = 3.0, friction = 1, radius = 60 })
+    magnetita.isFixedRotation = true
 
     --Rock1
     rock1 = display.newImage('src/assets/images/rock1.png', display.actualContentWidth,
@@ -162,7 +163,7 @@ function scene:create(event)
 
     --Chão
     local ground = display.newRect(0, display.actualContentWidth * 1.28, display.actualContentHeight * 1.5, 10)
-    -- ground:setFillColor(0,1,0);
+    ground:setFillColor(0,1,0,0);
     physics.addBody(ground, "static", { friction = 1 })
 
     --Botão de voltar
