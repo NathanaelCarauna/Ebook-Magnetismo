@@ -2,7 +2,6 @@ local composer = require("composer")
 local scene = composer.newScene()
 
 local backButton
-local forwardButton
 local background
 
 local function onBackPage(self, event)
@@ -56,9 +55,7 @@ function scene:hide(event)
     local phase = event.phase
 
     if (phase == "will") then
-        backButton:removeEventListener("touch", backButton)
-        forwardButton:removeEventListener("touch", forwardButton)
-        background:removeEventListener("tap", background)
+        backButton:removeEventListener("touch", backButton)        
     elseif (phase == "did") then
 
     end
