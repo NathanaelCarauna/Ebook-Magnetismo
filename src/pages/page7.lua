@@ -4,6 +4,10 @@ local scene = composer.newScene()
 local backButton
 local forwardButton
 local background
+local ponteiro
+local bussola
+local device
+local switch_device
 
 local function onBackPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
@@ -11,6 +15,23 @@ local function onBackPage(self, event)
 
         return true
     end
+end
+
+local function updateCompass(event)
+    local rotation = display.getCurrentStage().contentWidth / display.getCurrentStage().contentHeight
+    rotation = 360 - math.deg(math.atan2(event.yGravity, event.xGravity)) + 90 - rotation
+    ponteiro.rotation = rotation
+end
+
+local function turnOnOff(self, event)
+    if self.isOn then
+        self.isOn = false
+        self.fill.effect = "filter.grayscale"
+    else
+        self.isOn = true
+        self.fill.effect = nil
+    end
+    
 end
 
 local function onNextPage(self, event)
@@ -45,6 +66,34 @@ function scene:create(event)
     text.y = display.contentHeight * 0.74
     sceneGroup:insert(text)
 
+    device = display.newImage('src/assets/images/device.png', display.actualContentWidth,
+    display.actualContentHeight)
+    device.x = display.contentWidth * 5/10 +5
+    device.y = display.contentHeight * 6/20
+    device:scale(1, 1)
+    sceneGroup:insert(device)
+
+    bussola = display.newImage('src/assets/images/bussola.png', display.actualContentWidth,
+    display.actualContentHeight)
+    bussola.x = display.contentWidth * 5/10
+    bussola.y = display.contentHeight * 0.263
+    bussola:scale(0.05, 0.05)
+    sceneGroup:insert(bussola)
+
+    ponteiro = display.newImage('src/assets/images/bussola_ponteiro.png', display.actualContentWidth,
+    display.actualContentHeight)
+    ponteiro.x = display.contentWidth * 5/10
+    ponteiro.y = display.contentHeight * 0.263
+    ponteiro:scale(0.05, 0.05)
+    sceneGroup:insert(ponteiro)
+
+    switch_device = display.newImage('src/assets/images/switch_device.png', display.actualContentWidth,
+    display.actualContentHeight)    
+    switch_device.x = display.contentWidth * 7/10
+    switch_device.y = display.contentHeight * 5/10
+    switch_device:scale(0.1, 0.1)
+    sceneGroup:insert(switch_device)
+
 
     backButton = display.newImage('src/assets/buttons/lightButtonLeft.png', display.contentWidth,
         display.contentWidth)
@@ -71,6 +120,10 @@ function scene:show(event)
 
         forwardButton.touch = onNextPage
         forwardButton:addEventListener("touch", forwardButton)
+        Runtime:addEventListener("accelerometer", updateCompass)
+        switch_device.touch = turnOnOff
+        switch_device:addEventListener("touch", switch_device) 
+        switch_device.isOn = true
     end
 end
 
@@ -82,6 +135,7 @@ function scene:hide(event)
         backButton:removeEventListener("touch", backButton)
         forwardButton:removeEventListener("touch", forwardButton)
         background:removeEventListener("tap", background)
+        Runtime:removeEventListener("accelerometer", updateCompass)
     elseif (phase == "did") then
 
     end
