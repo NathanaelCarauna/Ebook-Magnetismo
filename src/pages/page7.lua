@@ -23,13 +23,18 @@ local function updateCompass(event)
     ponteiro.rotation = rotation
 end
 
-local function turnOnOff(self, event)
-    if self.isOn then
-        self.isOn = false
-        self.fill.effect = "filter.grayscale"
-    else
-        self.isOn = true
-        self.fill.effect = nil
+local function turnOnOff(event)
+
+    if event.phase == "ended" then
+        if switch_device.isOn then
+            print("Device is turned off")
+            switch_device.isOn = false
+            switch_device.fill.effect = "filter.grayscale"            
+        else            
+            print("Device is turned On")
+            switch_device.fill.effect = "filter.bloom"
+            switch_device.isOn = true
+        end        
     end
     
 end
@@ -91,6 +96,7 @@ function scene:create(event)
     display.actualContentHeight)    
     switch_device.x = display.contentWidth * 7/10
     switch_device.y = display.contentHeight * 5/10
+    switch_device.fill.effect = "filter.grayscale"
     switch_device:scale(0.1, 0.1)
     sceneGroup:insert(switch_device)
 
@@ -120,10 +126,10 @@ function scene:show(event)
 
         forwardButton.touch = onNextPage
         forwardButton:addEventListener("touch", forwardButton)
-        Runtime:addEventListener("accelerometer", updateCompass)
-        switch_device.touch = turnOnOff
-        switch_device:addEventListener("touch", switch_device) 
-        switch_device.isOn = true
+        Runtime:addEventListener("accelerometer", updateCompass)        
+        switch_device:addEventListener("touch", turnOnOff)
+        switch_device.fill.effect = "filter.grayscale"
+        switch_device.isOn = false
     end
 end
 
@@ -136,6 +142,7 @@ function scene:hide(event)
         forwardButton:removeEventListener("touch", forwardButton)
         background:removeEventListener("tap", background)
         Runtime:removeEventListener("accelerometer", updateCompass)
+        switch_device:removeEventListener("touch", turnOnOff)
     elseif (phase == "did") then
 
     end
