@@ -119,11 +119,13 @@ function scene:create(event)
 
     fixedMagnet = display.newImage('src/assets/images/squareMagnet.png', display.contentWidth,
         display.contentWidth)
+    fixedMagnet.isVisible = false
     sceneGroup:insert(fixedMagnet)
 
 
     magnet = display.newImage('src/assets/images/squareMagnet.png', display.contentWidth,
         display.contentWidth)
+    magnet.isVisible = false
     sceneGroup:insert(magnet)
 
 
@@ -153,8 +155,10 @@ function scene:show(event)
         --Reinicia posições
         fixedMagnet.x = display.contentWidth * 0.7
         fixedMagnet.y = display.contentHeight * 0.2
+        fixedMagnet.isVisible = true
         magnet.x = display.contentWidth * 0.2
         magnet.y = display.contentHeight * 0.2
+        magnet.isVisible = true        
 
         physics.start()
         physics.addBody(fixedMagnet, "static", { radius = 52, friction = 1 })
