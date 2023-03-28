@@ -4,6 +4,8 @@ local scene = composer.newScene()
 local backButton
 local forwardButton
 local background
+local ponteiro
+local bussola
 
 local function onBackPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
@@ -21,6 +23,11 @@ local function onNextPage(self, event)
     end
 end
 
+local function updateCompass(event)
+    local rotation = display.getCurrentStage().contentWidth / display.getCurrentStage().contentHeight
+    rotation = 360 - math.deg(math.atan2(event.yGravity, event.xGravity)) + 90 - rotation
+    ponteiro.rotation = rotation
+end
 
 function scene:create(event)
     local sceneGroup = self.view
@@ -42,8 +49,22 @@ function scene:create(event)
     local text = display.newImage('src/assets/texts/page4Text.png', display.actualContentWidth,
     display.actualContentHeight)
     text.x = display.contentWidth * 5/10
-    text.y = display.contentHeight * 2/20
+    text.y = display.contentHeight * 3/20
     sceneGroup:insert(text)
+
+    bussola = display.newImage('src/assets/images/bussola.png', display.actualContentWidth,
+    display.actualContentHeight)
+    bussola.x = display.contentWidth * 5/10
+    bussola.y = display.contentHeight * 12/20
+    bussola:scale(0.2, 0.2)
+    sceneGroup:insert(bussola)
+
+    ponteiro = display.newImage('src/assets/images/bussola_ponteiro.png', display.actualContentWidth,
+    display.actualContentHeight)
+    ponteiro.x = display.contentWidth * 5/10
+    ponteiro.y = display.contentHeight * 12/20
+    ponteiro:scale(0.2, 0.2)
+    sceneGroup:insert(ponteiro)
 
     backButton = display.newImage('src/assets/buttons/blackButtonLeft.png', display.contentWidth,
         display.contentWidth)
@@ -69,7 +90,8 @@ function scene:show(event)
         backButton:addEventListener("touch", backButton)
 
         forwardButton.touch = onNextPage
-        forwardButton:addEventListener("touch", forwardButton)
+        forwardButton:addEventListener("touch", forwardButton)        
+        Runtime:addEventListener("accelerometer", updateCompass)
     end
 end
 
@@ -81,6 +103,7 @@ function scene:hide(event)
         backButton:removeEventListener("touch", backButton)
         forwardButton:removeEventListener("touch", forwardButton)
         background:removeEventListener("tap", background)
+        Runtime:removeEventListener("accelerometer", updateCompass)
     elseif (phase == "did") then
 
     end
