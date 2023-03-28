@@ -30,10 +30,12 @@ local function turnOnOff(event)
             print("Device is turned off")
             switch_device.isOn = false
             switch_device.fill.effect = "filter.grayscale"            
+            spark.isVisible = false
         else            
             print("Device is turned On")
             switch_device.fill.effect = "filter.bloom"
             switch_device.isOn = true
+            spark.isVisible = true
         end        
     end
     
@@ -92,6 +94,14 @@ function scene:create(event)
     ponteiro:scale(0.05, 0.05)
     sceneGroup:insert(ponteiro)
 
+    spark = display.newImage('src/assets/images/spark.png', display.actualContentWidth,
+    display.actualContentHeight)
+    spark.x = display.contentWidth * 0.77
+    spark.y = display.contentHeight * 0.20
+    spark:scale(0.1, 0.1)
+    spark.isVisible = false
+    sceneGroup:insert(spark)
+
     switch_device = display.newImage('src/assets/images/switch_device.png', display.actualContentWidth,
     display.actualContentHeight)    
     switch_device.x = display.contentWidth * 7/10
@@ -143,6 +153,7 @@ function scene:hide(event)
         background:removeEventListener("tap", background)
         Runtime:removeEventListener("accelerometer", updateCompass)
         switch_device:removeEventListener("touch", turnOnOff)
+        spark.isVisible = false
     elseif (phase == "did") then
 
     end
