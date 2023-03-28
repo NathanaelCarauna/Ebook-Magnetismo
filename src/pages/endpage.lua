@@ -6,7 +6,7 @@ local background
 
 local function onBackPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
-        composer.gotoScene("src.pages.page8", "fade")
+        composer.gotoScene("src.pages.page8", "slideRight")
 
         return true
     end

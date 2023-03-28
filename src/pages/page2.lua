@@ -17,7 +17,7 @@ local magnet
 
 local function onBackPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
-        composer.gotoScene("src.pages.page1", "fade")
+        composer.gotoScene("src.pages.page1", "slideRight")
 
         return true
     end
@@ -25,7 +25,7 @@ end
 
 local function onNextPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
-        composer.gotoScene(string.format("src.pages.page3"), "fade")
+        composer.gotoScene(string.format("src.pages.page3"), "slideLeft")
 
         return true
     end

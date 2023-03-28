@@ -11,7 +11,7 @@ local images = {}
 
 local function onBackPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
-        composer.gotoScene("src.pages.page4", "fade")
+        composer.gotoScene("src.pages.page4", "slideRight")
 
         return true
     end
@@ -19,7 +19,7 @@ end
 
 local function onNextPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
-        composer.gotoScene(string.format("src.pages.page6"), "fade")
+        composer.gotoScene(string.format("src.pages.page6"), "slideLeft")
 
         return true
     end

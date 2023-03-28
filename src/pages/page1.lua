@@ -16,7 +16,7 @@ local rock3
 
 local function onBackPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
-        composer.gotoScene("src.pages.home", "fade")
+        composer.gotoScene("src.pages.home", "slideRight")
 
         return true
     end
@@ -24,7 +24,7 @@ end
 
 local function onNextPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
-        composer.gotoScene(string.format("src.pages.page2"), "fade")
+        composer.gotoScene(string.format("src.pages.page2"), "slideLeft")
 
         return true
     end
