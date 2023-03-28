@@ -22,17 +22,20 @@ local function animateImage()
     transition.to(spark, { x = display.contentWidth * 0.22, y = display.contentHeight * 0.20, time = 1000 })
     transition.to(spark, { x = display.contentWidth * 0.22, y = display.contentHeight * 0.33, time = 500, delay = 1000 })
     transition.to(spark, { x = display.contentWidth * 0.77, y = display.contentHeight * 0.33, time = 1000, delay = 1500 })
-    transition.to(spark, { x = display.contentWidth * 0.77, y = display.contentHeight * 0.20, time = 500, delay = 2500 })    
+    transition.to(spark, { x = display.contentWidth * 0.77, y = display.contentHeight * 0.20, time = 500, delay = 2500 })
     print("animateImage finished")
 
+    timer.performWithDelay(3001, function()
+        turnDeviceOFF()
+    end)
 end
 
 local function updateCompass(event)
-    if switch_device.isOn == false and event.xGravity ~= nil then        
+    if switch_device.isOn == false and event.xGravity ~= nil then
         local rotation = display.getCurrentStage().contentWidth / display.getCurrentStage().contentHeight
         rotation = 360 - math.deg(math.atan2(event.yGravity, event.xGravity)) + 90 - rotation
         ponteiro.rotation = rotation
-    elseif switch_device.isOn then        
+    elseif switch_device.isOn then
         local diffX = spark.x - ponteiro.x
         local diffY = spark.y - ponteiro.y
 
@@ -43,21 +46,28 @@ end
 
 local function turnOnOff(event)
     if event.phase == "ended" then
-        if switch_device.isOn then            
-            switch_device.isOn = false
-            switch_device.fill.effect = "filter.grayscale"
-            spark.isVisible = false            
-        else            
-            switch_device.fill.effect = "filter.bloom"
-            switch_device.isOn = true
-
-            if (spark.isVisible == false) then
-                spark.x = display.contentWidth * 0.77
-                spark.y = display.contentHeight * 0.20
-                spark.isVisible = true                
-                animateImage()                
-            end
+        if switch_device.isOn then
+            turnDeviceOFF()
+        else
+            turnDeviceON()
         end
+    end
+end
+function turnDeviceOFF()
+    switch_device.isOn = false
+    switch_device.fill.effect = "filter.grayscale"
+    spark.isVisible = false
+end
+
+function turnDeviceON()
+    switch_device.fill.effect = "filter.bloom"
+    switch_device.isOn = true
+
+    if (spark.isVisible == false) then
+        spark.x = display.contentWidth * 0.77
+        spark.y = display.contentHeight * 0.20
+        spark.isVisible = true
+        animateImage()
     end
 end
 
