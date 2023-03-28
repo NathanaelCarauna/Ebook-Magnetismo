@@ -25,17 +25,11 @@ local function onNextPage(self, event)
     end
 end
 
-local function changePowderImage(event)
-    print("SHAKE")
-    local threshold = 1.2
-    local xGravity = event.xGravity
-    local yGravity = event.yGravity
-    local zGravity = event.zGravity
-    local magnitude = math.sqrt(xGravity*xGravity + yGravity*yGravity + zGravity*zGravity)
-    if magnitude > threshold then
+local function changePowderImage(event)        
+    if event.isShake then
         currentIndex = currentIndex + 1
-        if currentIndex > #images then
-            currentIndex = 1
+        if currentIndex > #images then            
+            currentIndex = #images
         end
         -- exibir a nova imagem
         for i = 1, #images do
@@ -129,9 +123,14 @@ function scene:show(event)
         backButton.touch = onBackPage
         backButton:addEventListener("touch", backButton)
 
+        currentIndex = 1
+        for i = 1, #images do
+            images[i].isVisible = (i == currentIndex)
+        end
+        
         forwardButton.touch = onNextPage
         forwardButton:addEventListener("touch", forwardButton)
-        system.setAccelerometerInterval( 100 )
+        system.setAccelerometerInterval( 500 )
         Runtime:addEventListener("accelerometer", changePowderImage)
     end
 end
