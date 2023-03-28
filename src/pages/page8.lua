@@ -4,6 +4,7 @@ local scene = composer.newScene()
 local backButton
 local forwardButton
 local background
+local meteor
 
 local function onBackPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
@@ -21,6 +22,17 @@ local function onNextPage(self, event)
     end
 end
 
+local function moveMeteor(event)
+    local xGravity = event.xGravity
+    local zGravity = event.yGravity
+
+    local moveX = xGravity * 10 -- multiplicador para controlar a velocidade de movimento
+    local moveY = -zGravity * 10 -- multiplicador para controlar a velocidade de movimento
+
+    meteor.x = meteor.x + moveX
+    meteor.y = meteor.y + moveY
+end
+
 
 function scene:create(event)
     local sceneGroup = self.view
@@ -34,16 +46,23 @@ function scene:create(event)
     sceneGroup:insert(background)
 
     local instructionsText = display.newImage('src/assets/texts/page8Instructions.png', display.actualContentWidth,
-    display.actualContentHeight)
-    instructionsText.x = display.contentWidth * 3/10
+        display.actualContentHeight)
+    instructionsText.x = display.contentWidth * 3 / 10
     instructionsText.y = display.contentHeight * 0.49
     sceneGroup:insert(instructionsText)
 
     local text = display.newImage('src/assets/texts/page8Text.png', display.actualContentWidth,
-    display.actualContentHeight)
-    text.x = display.contentWidth * 5/10
+        display.actualContentHeight)
+    text.x = display.contentWidth * 5 / 10
     text.y = display.contentHeight * 0.2
     sceneGroup:insert(text)
+
+    meteor = display.newImage('src/assets/images/meteor.png', display.actualContentWidth,
+        display.actualContentHeight)
+    meteor.x = display.contentWidth * 9 / 10
+    meteor.y = display.contentHeight * 0.6
+    meteor:scale(0.1, 0.1)
+    sceneGroup:insert(meteor)
 
     backButton = display.newImage('src/assets/buttons/lightButtonLeft.png', display.contentWidth,
         display.contentWidth)
@@ -70,6 +89,7 @@ function scene:show(event)
 
         forwardButton.touch = onNextPage
         forwardButton:addEventListener("touch", forwardButton)
+        Runtime:addEventListener("accelerometer", moveMeteor)
     end
 end
 
@@ -78,9 +98,13 @@ function scene:hide(event)
     local phase = event.phase
 
     if (phase == "will") then
+        meteor.x = display.contentWidth * 9 / 10
+        meteor.y = display.contentHeight * 0.6
+
         backButton:removeEventListener("touch", backButton)
         forwardButton:removeEventListener("touch", forwardButton)
         background:removeEventListener("tap", background)
+        Runtime:removeEventListener("accelerometer", moveMeteor)
     elseif (phase == "did") then
 
     end
