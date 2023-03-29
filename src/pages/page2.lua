@@ -15,7 +15,7 @@ local turnButton
 local fixedMagnet
 local magnet
 
-local buttonSound
+local buttonSound, magnetHitSound
 
 local buttonSoundOptions = {
     channel = 1,
@@ -25,9 +25,16 @@ local buttonSoundOptions = {
     onComplete = function() audio.dispose(buttonSound) end
 }
 
+local magnetHitSoundOptions = {
+    channel = 1,
+    loops = 0,
+    duration = 1000,
+    fadein = 0
+}
+
 local function onBackPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
-        audio.play( buttonSound, buttonSoundOptions)
+        audio.play(buttonSound, buttonSoundOptions)
         composer.gotoScene("src.pages.page1", "slideRight")
 
         return true
@@ -36,7 +43,7 @@ end
 
 local function onNextPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
-        audio.play( buttonSound, buttonSoundOptions)
+        audio.play(buttonSound, buttonSoundOptions)
         composer.gotoScene(string.format("src.pages.page3"), "slideLeft")
 
         return true
@@ -94,6 +101,8 @@ local function onCollision(event)
         magnet:removeEventListener("enterFrame", atrairObjeto)
         magnet.x = fixedMagnet.x
         magnet.y = fixedMagnet.y
+
+        audio.play(magnetHitSound, magnetHitSoundOptions)
     elseif (event.phase == "ended") then
         magnet:addEventListener("enterFrame", atrairObjeto)
     end
@@ -101,7 +110,8 @@ end
 
 function scene:create(event)
     local sceneGroup = self.view
-    buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
+    buttonSound = audio.loadSound("src/assets/sounds/click-button.mp3")
+    magnetHitSound = audio.loadSound("src/assets/sounds/magnet-hit.mp3")
 
     background = display.newImage('src/assets/images/page2BackGround.png', display.actualContentWidth, display
         .actualContentHeight)
@@ -162,7 +172,8 @@ function scene:show(event)
     if (phase == "will") then
 
     elseif (phase == "did") then
-        buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
+        buttonSound = audio.loadSound("src/assets/sounds/click-button.mp3")
+        magnetHitSound = audio.loadSound("src/assets/sounds/magnet-hit.mp3")
         backButton.touch = onBackPage
         backButton:addEventListener("touch", backButton)
 
@@ -172,7 +183,7 @@ function scene:show(event)
         fixedMagnet.isVisible = true
         magnet.x = display.contentWidth * 0.2
         magnet.y = display.contentHeight * 0.2
-        magnet.isVisible = true        
+        magnet.isVisible = true
 
         physics.start()
         physics.addBody(fixedMagnet, "static", { radius = 52, friction = 1 })
@@ -201,7 +212,7 @@ function scene:hide(event)
         magnet:removeEventListener("touch", onMagnetTouch)
         magnet:removeEventListener("collision", onCollision)
         turnButton:removeEventListener("touch", onTurnButtonTouch)
-        
+
         physics.stop()
     elseif (phase == "did") then
 
