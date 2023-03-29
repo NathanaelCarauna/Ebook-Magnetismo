@@ -15,8 +15,19 @@ local turnButton
 local fixedMagnet
 local magnet
 
+local buttonSound
+
+local buttonSoundOptions = {
+    channel = 1,
+    loops = 0,
+    duration = 1000,
+    fadein = 0,
+    onComplete = function() audio.dispose(buttonSound) end
+}
+
 local function onBackPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
+        audio.play( buttonSound, buttonSoundOptions)
         composer.gotoScene("src.pages.page1", "slideRight")
 
         return true
@@ -25,6 +36,7 @@ end
 
 local function onNextPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
+        audio.play( buttonSound, buttonSoundOptions)
         composer.gotoScene(string.format("src.pages.page3"), "slideLeft")
 
         return true
@@ -89,6 +101,7 @@ end
 
 function scene:create(event)
     local sceneGroup = self.view
+    buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
 
     background = display.newImage('src/assets/images/page2BackGround.png', display.actualContentWidth, display
         .actualContentHeight)
@@ -149,6 +162,7 @@ function scene:show(event)
     if (phase == "will") then
 
     elseif (phase == "did") then
+        buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
         backButton.touch = onBackPage
         backButton:addEventListener("touch", backButton)
 

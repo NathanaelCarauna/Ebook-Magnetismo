@@ -14,8 +14,19 @@ local rock1
 local rock2
 local rock3
 
+local buttonSound
+
+local buttonSoundOptions = {
+    channel = 1,
+    loops = 0,
+    duration = 1000,
+    fadein = 0,
+    onComplete = function() audio.dispose(buttonSound) end
+}
+
 local function onBackPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
+        audio.play( buttonSound, buttonSoundOptions)
         composer.gotoScene("src.pages.home", "slideRight")
 
         return true
@@ -24,6 +35,7 @@ end
 
 local function onNextPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
+        audio.play( buttonSound, buttonSoundOptions)
         composer.gotoScene(string.format("src.pages.page2"), "slideLeft")
 
         return true
@@ -85,6 +97,7 @@ end
 
 function scene:create(event)
     local sceneGroup = self.view
+    buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
 
     --Background
     background = display.newImage('src/assets/images/page1Background.png', display.actualContentWidth, display
@@ -169,6 +182,7 @@ function scene:show(event)
     if (phase == "will") then
 
     elseif (phase == "did") then
+        buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
         backButton.touch = onBackPage
         backButton:addEventListener("touch", backButton)
 

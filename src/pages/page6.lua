@@ -7,9 +7,19 @@ local forwardButton
 local background
 local limit_bottom
 local clip1, clip2, clip3, clip4, magnet
+local buttonSound
+
+local buttonSoundOptions = {
+    channel = 1,
+    loops = 0,
+    duration = 1000,
+    fadein = 0,
+    onComplete = function() audio.dispose(buttonSound) end
+}
 
 local function onBackPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
+        audio.play( buttonSound, buttonSoundOptions)
         composer.gotoScene("src.pages.page5", "slideRight")
 
         return true
@@ -18,6 +28,7 @@ end
 
 local function onNextPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
+        audio.play( buttonSound, buttonSoundOptions)
         composer.gotoScene(string.format("src.pages.page7"), "slideLeft")
 
         return true
@@ -63,6 +74,7 @@ end
 
 function scene:create(event)
     local sceneGroup = self.view
+    buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
 
     background = display.newImage('src/assets/images/page6Background.png', display.actualContentWidth, display
         .actualContentHeight)
@@ -156,6 +168,7 @@ function scene:show(event)
     elseif (phase == "did") then
         backButton.touch = onBackPage
         backButton:addEventListener("touch", backButton)
+        buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
 
         magnet.x = display.contentWidth * 0.5
         magnet.y = display.contentHeight * 0.5

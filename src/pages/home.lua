@@ -2,9 +2,19 @@ local composer = require("composer")
 local scene = composer.newScene()
 
 local forwardButton
+local buttonSound
+
+local buttonSoundOptions = {
+    channel = 1,
+    loops = 0,
+    duration = 1000,
+    fadein = 0,
+    onComplete = function() audio.dispose(buttonSound) end
+}
 
 local function onNextPage(self, event)
 	if event.phase == "ended" or event.phase == "cancelled" then
+		audio.play( buttonSound, buttonSoundOptions)
 		composer.gotoScene("src.pages.page1", "slideLeft")
 
 		return true
@@ -13,6 +23,7 @@ end
 
 function scene:create(event)
 	local sceneGroup = self.view
+	buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
 
 	local background = display.newImage(sceneGroup, "src/assets/images/HomeBackground.png",
 	display.actualContentWidth, display.actualContentHeight)
@@ -47,6 +58,7 @@ function scene:show(event)
 	elseif (phase == "did") then
 		forwardButton.touch = onNextPage
 		forwardButton:addEventListener("touch", forwardButton)
+		buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
 	end
 end
 
