@@ -1,9 +1,11 @@
 local composer = require("composer")
+local physics = require("physics")
 local scene = composer.newScene()
 
 local backButton
 local forwardButton
 local background
+local limit_bottom
 local clip1, clip2, clip3, clip4, magnet
 
 local function onBackPage(self, event)
@@ -37,6 +39,24 @@ local function onDragObj(self, event)
     end
 end
 
+local myJoint
+local prevLink = magnet
+local nextLink
+
+local function onCollision(self, event)
+    if event.phase == "began" then
+        if (self.id == "magnet") then
+            nextLink = event.other
+            if nextLink.id == "clip1" or nextLink.id == "clip2" or nextLink.id == "clip3" or nextLink.id == "clip4" then
+                timer.performWithDelay(1, function()
+                    myJoint = physics.newJoint("pivot", prevLink, nextLink, prevLink.x, prevLink.y + 30)
+                    prevLink = nextLink
+                end)
+            end
+        end
+    end
+end
+
 function scene:create(event)
     local sceneGroup = self.view
 
@@ -49,46 +69,66 @@ function scene:create(event)
     sceneGroup:insert(background)
 
     local instructionsText = display.newImage('src/assets/texts/page6Instructions.png', display.actualContentWidth,
-    display.actualContentHeight)
-    instructionsText.x = display.contentWidth * 2/10
+        display.actualContentHeight)
+    instructionsText.x = display.contentWidth * 2 / 10
     instructionsText.y = display.contentHeight * 0.48
     sceneGroup:insert(instructionsText)
 
     local text = display.newImage('src/assets/texts/page6Text.png', display.actualContentWidth,
-    display.actualContentHeight)
-    text.x = display.contentWidth * 5/10
+        display.actualContentHeight)
+    text.x = display.contentWidth * 5 / 10
     text.y = display.contentHeight * 0.2
     sceneGroup:insert(text)
 
     magnet = display.newImage('src/assets/images/umagnet.png', display.actualContentWidth,
-    display.actualContentHeight)
+        display.actualContentHeight)
+    magnet.id = "magnet"
     magnet.x = display.contentWidth * 0.5
     magnet.y = display.contentHeight * 0.5
     sceneGroup:insert(magnet)
 
     clip1 = display.newImage('src/assets/images/clip.png', display.actualContentWidth,
-    display.actualContentHeight)
+        display.actualContentHeight)
+    clip1.id = "clip1"
     clip1.x = display.contentWidth * 0.2
     clip1.y = display.contentHeight * 0.85
     sceneGroup:insert(clip1)
 
     clip2 = display.newImage('src/assets/images/clip.png', display.actualContentWidth,
-    display.actualContentHeight)
+        display.actualContentHeight)
+    clip2.id = "clip2"
     clip2.x = display.contentWidth * 0.4
     clip2.y = display.contentHeight * 0.85
     sceneGroup:insert(clip2)
 
     clip3 = display.newImage('src/assets/images/clip.png', display.actualContentWidth,
-    display.actualContentHeight)
+        display.actualContentHeight)
+    clip3.id = "clip3"
     clip3.x = display.contentWidth * 0.6
     clip3.y = display.contentHeight * 0.85
     sceneGroup:insert(clip3)
 
     clip4 = display.newImage('src/assets/images/clip.png', display.actualContentWidth,
-    display.actualContentHeight)
+        display.actualContentHeight)
+    clip4.id = "clip4"
     clip4.x = display.contentWidth * 0.8
     clip4.y = display.contentHeight * 0.85
     sceneGroup:insert(clip4)
+
+    limit_left = display.newRect(-40, 0, 40, display.contentHeight)
+    limit_left.anchorX = 0
+    limit_left.anchorY = 0
+    sceneGroup:insert(limit_left)
+
+    limit_right = display.newRect(display.contentWidth, 0, 40, display.contentHeight)
+    limit_right.anchorX = 0
+    limit_right.anchorY = 0
+    sceneGroup:insert(limit_right)
+
+    limit_bottom = display.newRect(0, display.contentHeight, display.contentWidth, 40)
+    limit_bottom.anchorX = 0
+    limit_bottom.anchorY = 0
+    sceneGroup:insert(limit_bottom)
 
     backButton = display.newImage('src/assets/buttons/blackButtonLeft.png', display.contentWidth,
         display.contentWidth)
@@ -113,10 +153,44 @@ function scene:show(event)
         backButton.touch = onBackPage
         backButton:addEventListener("touch", backButton)
 
+        magnet.x = display.contentWidth * 0.5
+        magnet.y = display.contentHeight * 0.5
+        clip1.x = display.contentWidth * 0.2
+        clip1.y = display.contentHeight * 0.85
+        clip2.x = display.contentWidth * 0.4
+        clip2.y = display.contentHeight * 0.85
+        clip3.x = display.contentWidth * 0.6
+        clip3.y = display.contentHeight * 0.85
+        clip4.x = display.contentWidth * 0.8
+        clip4.y = display.contentHeight * 0.85
+        prevLink = magnet
+        myJoint = {}
+
+        physics.start()
+        physics.addBody(magnet, "kinematic", { radius = 30 })
+        physics.addBody(clip1, "dynamic", { radius = 30 })
+        physics.addBody(clip2, "dynamic", { radius = 30 })
+        physics.addBody(clip3, "dynamic", { radius = 30 })
+        physics.addBody(clip4, "dynamic", { radius = 30 })
+        physics.addBody(limit_bottom, "static", { density = 1.6, friction = 0.5, bounce = 0.2 })
+        physics.addBody(limit_left, "static", { density = 1.6, friction = 0.5, bounce = 0.2 })
+        physics.addBody(limit_right, "static", { density = 1.6, friction = 0.5, bounce = 0.2 })
+
         forwardButton.touch = onNextPage
         forwardButton:addEventListener("touch", forwardButton)
-        magnet.touch= onDragObj
+        magnet.touch = onDragObj
         magnet:addEventListener("touch", magnet)
+
+        magnet.collision = onCollision
+        magnet:addEventListener("collision")
+        clip1.collision = onCollision
+        clip1:addEventListener("collision")
+        clip2.collision = onCollision
+        clip2:addEventListener("collision")
+        clip3.collision = onCollision
+        clip3:addEventListener("collision")
+        clip4.collision = onCollision
+        clip4:addEventListener("collision")
     end
 end
 
@@ -129,6 +203,8 @@ function scene:hide(event)
         forwardButton:removeEventListener("touch", forwardButton)
         background:removeEventListener("tap", background)
         magnet:removeEventListener("touch", magnet)
+        Runtime:removeEventListener("collision", onCollision)
+        physics.stop()
     elseif (phase == "did") then
 
     end
