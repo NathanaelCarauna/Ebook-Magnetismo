@@ -71,7 +71,7 @@ function scene:create(event)
 
     local instructionsText = display.newImage('src/assets/texts/page5Instructions.png', display.actualContentWidth,
     display.actualContentHeight)
-    instructionsText.x = display.contentWidth * 3/10
+    instructionsText.x = display.contentWidth * 0.4
     instructionsText.y = display.contentHeight * 0.02
     sceneGroup:insert(instructionsText)
 
@@ -84,14 +84,16 @@ function scene:create(event)
     magnetPowder01 = display.newImage('src/assets/images/magnetPowder01.png', display.contentWidth,
         display.contentWidth)
     magnetPowder01.x = display.contentWidth * 0.5
-    magnetPowder01.y = display.contentHeight * 0.3
+    magnetPowder01.y = display.contentHeight * 0.25
+    magnetPowder01:scale(1.5,1.5)
     sceneGroup:insert(magnetPowder01)
     table.insert(images, magnetPowder01)
 
     magnetPowder02 = display.newImage('src/assets/images/magnetPowder02.png', display.contentWidth,
         display.contentWidth)
     magnetPowder02.x = display.contentWidth * 0.5
-    magnetPowder02.y = display.contentHeight * 0.3
+    magnetPowder02.y = display.contentHeight * 0.25
+    magnetPowder02:scale(1.5,1.5)
     magnetPowder02.isVisible = false
     sceneGroup:insert(magnetPowder02)
     table.insert(images, magnetPowder02)
@@ -99,7 +101,8 @@ function scene:create(event)
     magnetPowder03 = display.newImage('src/assets/images/magnetPowder03.png', display.contentWidth,
         display.contentWidth)
     magnetPowder03.x = display.contentWidth * 0.5
-    magnetPowder03.y = display.contentHeight * 0.3
+    magnetPowder03.y = display.contentHeight * 0.25
+    magnetPowder03:scale(1.5,1.5)
     magnetPowder03.isVisible = false
     sceneGroup:insert(magnetPowder03)
     table.insert(images, magnetPowder03)
@@ -108,6 +111,8 @@ function scene:create(event)
         display.contentWidth)
     magnetPowder04.x = display.contentWidth * 0.5
     magnetPowder04.y = display.contentHeight * 0.3
+    magnetPowder04.y = display.contentHeight * 0.25
+    magnetPowder04:scale(1.5,1.5)
     magnetPowder04.isVisible = false
     sceneGroup:insert(magnetPowder04)
     table.insert(images, magnetPowder04)
@@ -115,7 +120,8 @@ function scene:create(event)
     magnetPowder05 = display.newImage('src/assets/images/magnetPowder05.png', display.contentWidth,
         display.contentWidth)
     magnetPowder05.x = display.contentWidth * 0.5
-    magnetPowder05.y = display.contentHeight * 0.3
+    magnetPowder05.y = display.contentHeight * 0.25
+    magnetPowder05:scale(1.5,1.5)
     magnetPowder05.isVisible = false
     sceneGroup:insert(magnetPowder05)
     table.insert(images, magnetPowder05)
