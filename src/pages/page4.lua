@@ -55,8 +55,8 @@ function scene:create(event)
 
     local instructionsText = display.newImage('src/assets/texts/page4Instructions.png', display.actualContentWidth,
     display.actualContentHeight)
-    instructionsText.x = display.contentWidth * 0.32
-    instructionsText.y = display.contentHeight * 0.86
+    instructionsText.x = display.contentWidth * 0.44
+    instructionsText.y = display.contentHeight * 0.82
     sceneGroup:insert(instructionsText)
 
     local text = display.newImage('src/assets/texts/page4Text.png', display.actualContentWidth,
@@ -68,15 +68,15 @@ function scene:create(event)
     bussola = display.newImage('src/assets/images/bussola.png', display.actualContentWidth,
     display.actualContentHeight)
     bussola.x = display.contentWidth * 5/10
-    bussola.y = display.contentHeight * 12/20
-    bussola:scale(0.2, 0.2)
+    bussola.y = display.contentHeight * 11/20
+    bussola:scale(0.15, 0.15)
     sceneGroup:insert(bussola)
 
     ponteiro = display.newImage('src/assets/images/bussola_ponteiro.png', display.actualContentWidth,
     display.actualContentHeight)
     ponteiro.x = display.contentWidth * 5/10
-    ponteiro.y = display.contentHeight * 12/20
-    ponteiro:scale(0.2, 0.2)
+    ponteiro.y = display.contentHeight * 11/20
+    ponteiro:scale(0.15, 0.15)
     sceneGroup:insert(ponteiro)
 
     backButton = display.newImage('src/assets/buttons/blackButtonLeft.png', display.contentWidth,
