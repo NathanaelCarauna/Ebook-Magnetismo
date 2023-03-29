@@ -8,7 +8,7 @@ local background
 local currentIndex = 1
 local images = {}
 
-local buttonSound
+local buttonSound, magnetHitSound
 
 local buttonSoundOptions = {
     channel = 1,
@@ -16,6 +16,12 @@ local buttonSoundOptions = {
     duration = 1000,
     fadein = 0,
     onComplete = function() audio.dispose(buttonSound) end
+}
+local magnetHitSoundOptions = {
+    channel = 1,
+    loops = 0,
+    duration = 1000,
+    fadein = 0
 }
 
 
@@ -39,6 +45,7 @@ end
 
 local function changePowderImage(event)        
     if event.isShake then
+        audio.play(magnetHitSound, magnetHitSoundOptions)
         currentIndex = currentIndex + 1
         if currentIndex > #images then            
             currentIndex = #images
@@ -134,6 +141,7 @@ function scene:show(event)
 
     elseif (phase == "did") then
         buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
+        magnetHitSound = audio.loadSound("src/assets/sounds/powder-shake.mp3")
         backButton.touch = onBackPage
         backButton:addEventListener("touch", backButton)
 

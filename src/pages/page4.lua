@@ -100,6 +100,7 @@ function scene:show(event)
 
     elseif (phase == "did") then
         buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
+        
         backButton.touch = onBackPage
         backButton:addEventListener("touch", backButton)
 
