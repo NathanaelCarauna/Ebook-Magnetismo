@@ -15,7 +15,7 @@ local earth
 local sun
 local limit_left, limit_right, limit_Up, limit_bottom
 
-local buttonSound
+local buttonSound, magnetHitSound
 
 local buttonSoundOptions = {
     channel = 1,
@@ -23,6 +23,13 @@ local buttonSoundOptions = {
     duration = 1000,
     fadein = 0,
     onComplete = function() audio.dispose(buttonSound) end
+}
+
+local magnetHitSoundOptions = {
+    channel = 1,
+    loops = 0,
+    duration = 1000 * 60 * 10,
+    fadein = 0
 }
 
 
@@ -156,9 +163,10 @@ function scene:show(event)
         
     elseif (phase == "did") then
         buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
+        magnetHitSound = audio.loadSound( "src/assets/sounds/solar-wind.mp3")
         backButton.touch = onBackPage
         backButton:addEventListener("touch", backButton)
-        
+        audio.play(magnetHitSound, magnetHitSoundOptions)
         physics.start()
         physics.setGravity(0, 0)
         physics.addBody(earth, "static", { density = 1.6, friction = 0.5, radius= 30})
@@ -190,6 +198,7 @@ function scene:hide(event)
         background:removeEventListener("tap", background)
         Runtime:removeEventListener("accelerometer", moveMeteor)
         physics.stop()
+        audio.stop()
     elseif (phase == "did") then
 
     end
