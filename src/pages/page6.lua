@@ -43,14 +43,18 @@ local myJoint
 local prevLink = magnet
 local nextLink
 
+-- //TODO Adicionar atração
 local function onCollision(self, event)
     if event.phase == "began" then
         if (self.id == "magnet") then
             nextLink = event.other
             if nextLink.id == "clip1" or nextLink.id == "clip2" or nextLink.id == "clip3" or nextLink.id == "clip4" then
                 timer.performWithDelay(1, function()
-                    myJoint = physics.newJoint("pivot", prevLink, nextLink, prevLink.x, prevLink.y + 30)
-                    prevLink = nextLink
+                    if(prevLink ~= nextLink) then
+                        print("Prevlink = ", prevLink.id, " NExtLink=", nextLink.id)
+                        myJoint = physics.newJoint("pivot", prevLink, nextLink, prevLink.x, prevLink.y + 30, nextLink.x, nextLink.y + 20)
+                        prevLink = nextLink
+                    end
                 end)
             end
         end
@@ -168,10 +172,10 @@ function scene:show(event)
 
         physics.start()
         physics.addBody(magnet, "kinematic", { radius = 30 })
-        physics.addBody(clip1, "dynamic", { radius = 30 })
-        physics.addBody(clip2, "dynamic", { radius = 30 })
-        physics.addBody(clip3, "dynamic", { radius = 30 })
-        physics.addBody(clip4, "dynamic", { radius = 30 })
+        physics.addBody(clip1, "dynamic", { radius = 20 })
+        physics.addBody(clip2, "dynamic", { radius = 20 })
+        physics.addBody(clip3, "dynamic", { radius = 20 })
+        physics.addBody(clip4, "dynamic", { radius = 20 })
         physics.addBody(limit_bottom, "static", { density = 1.6, friction = 0.5, bounce = 0.2 })
         physics.addBody(limit_left, "static", { density = 1.6, friction = 0.5, bounce = 0.2 })
         physics.addBody(limit_right, "static", { density = 1.6, friction = 0.5, bounce = 0.2 })
