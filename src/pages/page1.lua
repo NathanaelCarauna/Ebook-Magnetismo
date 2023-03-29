@@ -122,7 +122,7 @@ function scene:create(event)
     --Instruções de interação
     local instructionsText = display.newImage('src/assets/texts/Page1Instructions.png', display.actualContentWidth,
         display.actualContentHeight)
-    instructionsText.x = display.contentWidth * 0.32
+    instructionsText.x = display.contentWidth * 0.4
     instructionsText.y = display.contentHeight * 0.49
     instructionsText:scale(1, 1)
     sceneGroup:insert(instructionsText)
