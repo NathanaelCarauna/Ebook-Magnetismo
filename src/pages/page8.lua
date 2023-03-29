@@ -108,11 +108,11 @@ function scene:create(event)
     sun:scale(0.5, 0.5)
     sceneGroup:insert(sun)
     
-    earth = display.newImage('src/assets/images/earth.png', display.actualContentWidth,
+    earth = display.newImage('src/assets/images/earth2.png', display.actualContentWidth,
     display.actualContentHeight)
     earth.x = display.contentWidth * 2 / 10
     earth.y = display.contentHeight * 0.7
-    earth:scale(0.1, 0.1)
+    earth:scale(0.7, 0.7)
     sceneGroup:insert(earth)
     
     raio_solar = display.newImage('src/assets/images/raio_solar.png', display.actualContentWidth,
