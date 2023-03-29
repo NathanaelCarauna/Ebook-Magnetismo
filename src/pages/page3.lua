@@ -15,7 +15,7 @@ local newMagnet4
 local newMagnet5
 local newMagnet6
 
-local buttonSound
+local buttonSound, magnetHitSound
 
 local buttonSoundOptions = {
     channel = 1,
@@ -23,6 +23,13 @@ local buttonSoundOptions = {
     duration = 1000,
     fadein = 0,
     onComplete = function() audio.dispose(buttonSound) end
+}
+
+local magnetHitSoundOptions = {
+    channel = 1,
+    loops = 0,
+    duration = 1000,
+    fadein = 0
 }
 
 local function onBackPage(self, event)
@@ -74,6 +81,7 @@ function onLocalCollision(self, event)
                     newMagnet2.y = magnet.y - 80
                     newMagnet2.isVisible = true
 
+                    audio.play(magnetHitSound, magnetHitSoundOptions)
                     physics.removeBody( magnet )
                     physics.addBody(newMagnet1, "dinamic", { radius = 50, friction = 1 })
                     newMagnet1.isFixedRotation = true
@@ -94,6 +102,7 @@ function onLocalCollision(self, event)
                     newMagnet4.y = newMagnet1.y + 26
                     newMagnet4.isVisible = true
 
+                    audio.play(magnetHitSound, magnetHitSoundOptions)
                     physics.removeBody(newMagnet1)
                     physics.addBody(newMagnet3, "dinamic", { radius = 25, friction = 1 })
                     newMagnet3.isFixedRotation = true
@@ -114,6 +123,7 @@ function onLocalCollision(self, event)
                     newMagnet6.y = newMagnet2.y + 26
                     newMagnet6.isVisible = true
 
+                    audio.play(magnetHitSound, magnetHitSoundOptions)
                     physics.removeBody(newMagnet2)
                     physics.addBody(newMagnet5, "dinamic", { radius = 25, friction = 1 })
                     newMagnet5.isFixedRotation = true
@@ -231,6 +241,7 @@ function scene:show(event)
 
     elseif (phase == "did") then
         buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
+        magnetHitSound = audio.loadSound("src/assets/sounds/knife-hit.mp3")
         backButton.touch = onBackPage
         backButton:addEventListener("touch", backButton)
 
