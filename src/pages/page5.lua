@@ -4,7 +4,7 @@ local scene = composer.newScene()
 local backButton
 local forwardButton
 local background
-
+local canShake
 local currentIndex = 1
 local images = {}
 
@@ -45,8 +45,16 @@ end
 
 local function changePowderImage(event)        
     if event.isShake then
-        audio.play(magnetHitSound, magnetHitSoundOptions)
-        currentIndex = currentIndex + 1
+        
+        if canShake == true then
+            currentIndex = currentIndex + 1
+            audio.play(magnetHitSound, magnetHitSoundOptions)
+            canShake = false
+        end
+
+        timer.performWithDelay(1000, function ()
+            canShake = true            
+        end)
         if currentIndex > #images then            
             currentIndex = #images
         end
@@ -146,6 +154,7 @@ function scene:show(event)
     if (phase == "will") then
 
     elseif (phase == "did") then
+        canShake = true
         buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
         magnetHitSound = audio.loadSound("src/assets/sounds/powder-shake.mp3")
         backButton.touch = onBackPage
