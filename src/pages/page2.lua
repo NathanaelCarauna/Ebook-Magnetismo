@@ -123,7 +123,7 @@ function scene:create(event)
 
     local instructionsText = display.newImage('src/assets/texts/page2Instructions.png', display.actualContentWidth,
         display.actualContentHeight)
-    instructionsText.x = display.contentWidth * 0.32
+    instructionsText.x = display.contentWidth * 0.5
     instructionsText.y = display.contentHeight * 0.02
     sceneGroup:insert(instructionsText)
 
