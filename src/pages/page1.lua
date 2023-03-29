@@ -14,7 +14,7 @@ local rock1
 local rock2
 local rock3
 
-local buttonSound
+local buttonSound, metalHitSound
 
 local buttonSoundOptions = {
     channel = 1,
@@ -24,9 +24,16 @@ local buttonSoundOptions = {
     onComplete = function() audio.dispose(buttonSound) end
 }
 
+local metalHitSoundOptions = {
+    channel = 1,
+    loops = 0,
+    duration = 1000,
+    fadein = 0
+}
+
 local function onBackPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
-        audio.play( buttonSound, buttonSoundOptions)
+        audio.play(buttonSound, buttonSoundOptions)
         composer.gotoScene("src.pages.home", "slideRight")
 
         return true
@@ -35,7 +42,7 @@ end
 
 local function onNextPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
-        audio.play( buttonSound, buttonSoundOptions)
+        audio.play(buttonSound, buttonSoundOptions)
         composer.gotoScene(string.format("src.pages.page2"), "slideLeft")
 
         return true
@@ -64,13 +71,13 @@ function onDragObj(event, obj)
         obj.isFocus = true
         obj.deltaX = event.x - obj.x
         obj.deltaY = event.y - obj.y
-      elseif event.phase == "moved" then
+    elseif event.phase == "moved" then
         obj.x = event.x - obj.deltaX
         obj.y = event.y - obj.deltaY
-      elseif event.phase == "ended" or event.phase == "cancelled" then
+    elseif event.phase == "ended" or event.phase == "cancelled" then
         display.getCurrentStage():setFocus(nil)
         obj.isFocus = false
-      end
+    end
 end
 
 local function atrairObjeto()
@@ -85,19 +92,23 @@ local function atrairObjeto()
     end
 end
 
-local function onCollision( event )
-    if ( event.phase == "began" ) then
-        magnetita:removeEventListener( "enterFrame", atrairObjeto )
+local function onCollision(event)
+    if (event.phase == "began") then
+        magnetita:removeEventListener("enterFrame", atrairObjeto)
         magnetita.x = metal.x
         magnetita.y = metal.y
-    elseif ( event.phase == "ended" ) then
-        magnetita:addEventListener( "enterFrame", atrairObjeto )
+        if event.other == metal then
+            audio.play(metalHitSound, metalHitSoundOptions)
+        end
+    elseif (event.phase == "ended") then
+        magnetita:addEventListener("enterFrame", atrairObjeto)
     end
 end
 
 function scene:create(event)
     local sceneGroup = self.view
-    buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
+    buttonSound = audio.loadSound("src/assets/sounds/click-button.mp3")
+    metalHitSound = audio.loadSound("src/assets/sounds/metal-hit.mp3")
 
     --Background
     background = display.newImage('src/assets/images/page1Background.png', display.actualContentWidth, display
@@ -130,31 +141,31 @@ function scene:create(event)
     metal.x = display.contentWidth * 19 / 20
     metal.y = display.contentHeight * 0.727
     metal:scale(1, 1)
-    sceneGroup:insert(metal)    
+    sceneGroup:insert(metal)
 
     --Magnetita
     magnetita = display.newImage('src/assets/images/magnetita.png', display.actualContentWidth,
         display.actualContentHeight)
     magnetita:scale(1, 1)
-    sceneGroup:insert(magnetita)    
+    sceneGroup:insert(magnetita)
 
     --Rock1
     rock1 = display.newImage('src/assets/images/rock1.png', display.actualContentWidth,
         display.actualContentHeight)
     rock1:scale(1, 1)
     sceneGroup:insert(rock1)
-    
+
 
     --Rock2
     rock2 = display.newImage('src/assets/images/rock2.png', display.actualContentWidth,
         display.actualContentHeight)
     rock2:scale(1, 1)
     sceneGroup:insert(rock2)
-    
+
 
     --Rock3
     rock3 = display.newImage('src/assets/images/rock3.png', display.actualContentWidth,
-        display.actualContentHeight)    
+        display.actualContentHeight)
     rock3:scale(1, 1)
     sceneGroup:insert(rock3)
 
@@ -182,7 +193,8 @@ function scene:show(event)
     if (phase == "will") then
 
     elseif (phase == "did") then
-        buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
+        buttonSound = audio.loadSound("src/assets/sounds/click-button.mp3")
+        metalHitSound = audio.loadSound("src/assets/sounds/metal-hit.mp3")
         backButton.touch = onBackPage
         backButton:addEventListener("touch", backButton)
 
@@ -201,8 +213,8 @@ function scene:show(event)
 
         --Adiciona física
         physics.start()
-        physics.setGravity( 0, 0 )
-        physics.addBody(metal, "static", { radius = 128, friction= 1 })
+        physics.setGravity(0, 0)
+        physics.addBody(metal, "static", { radius = 128, friction = 1 })
         physics.addBody(magnetita, "dinamic", { density = 3.0, friction = 1, radius = 60 })
         magnetita.isFixedRotation = true
         physics.addBody(rock1, "dinamic", { density = 3.0, friction = 1, radius = 50 })
@@ -210,11 +222,11 @@ function scene:show(event)
         physics.addBody(rock3, "dinamic", { density = 3.0, friction = 1, radius = 60 })
 
         magnetita:addEventListener("touch", onMagnetitaTouch)
-        magnetita:addEventListener( "collision", onCollision )
-        rock1:addEventListener("touch", onRock1Touch )
-        rock2:addEventListener("touch", onRock2Touch )
-        rock3:addEventListener("touch", onRock3Touch )
-        Runtime:addEventListener("enterFrame", atrairObjeto)        
+        magnetita:addEventListener("collision", onCollision)
+        rock1:addEventListener("touch", onRock1Touch)
+        rock2:addEventListener("touch", onRock2Touch)
+        rock3:addEventListener("touch", onRock3Touch)
+        Runtime:addEventListener("enterFrame", atrairObjeto)
     end
 end
 
@@ -222,7 +234,7 @@ function scene:hide(event)
     local sceneGroup = self.view
     local phase = event.phase
 
-    if (phase == "will") then        
+    if (phase == "will") then
         physics.stop()
 
         Runtime:removeEventListener("enterFrame", atrairObjeto)
@@ -230,12 +242,10 @@ function scene:hide(event)
         forwardButton:removeEventListener("touch", forwardButton)
         background:removeEventListener("tap", background)
         magnetita:removeEventListener("touch", onMagnetitaTouch)
-        magnetita:removeEventListener( "collision", onCollision )
-        rock1:removeEventListener("touch", onRock1Touch )
-        rock2:removeEventListener("touch", onRock2Touch )
-        rock3:removeEventListener("touch", onRock3Touch )
-
-        
+        magnetita:removeEventListener("collision", onCollision)
+        rock1:removeEventListener("touch", onRock1Touch)
+        rock2:removeEventListener("touch", onRock2Touch)
+        rock3:removeEventListener("touch", onRock3Touch)
     elseif (phase == "did") then
 
     end
