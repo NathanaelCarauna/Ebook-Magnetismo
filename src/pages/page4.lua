@@ -97,8 +97,6 @@ function scene:show(event)
     local phase = event.phase
 
     if (phase == "will") then
-
-    elseif (phase == "did") then
         buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
         
         backButton.touch = onBackPage
@@ -107,6 +105,8 @@ function scene:show(event)
         forwardButton.touch = onNextPage
         forwardButton:addEventListener("touch", forwardButton)        
         Runtime:addEventListener("accelerometer", updateCompass)
+    elseif (phase == "did") then
+       
     end
 end
 

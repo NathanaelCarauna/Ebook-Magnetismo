@@ -152,8 +152,6 @@ function scene:show(event)
     local phase = event.phase
 
     if (phase == "will") then
-
-    elseif (phase == "did") then
         canShake = true
         buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
         magnetHitSound = audio.loadSound("src/assets/sounds/powder-shake.mp3")
@@ -169,6 +167,8 @@ function scene:show(event)
         forwardButton:addEventListener("touch", forwardButton)
         system.setAccelerometerInterval( 500 )
         Runtime:addEventListener("accelerometer", changePowderImage)
+    elseif (phase == "did") then
+       
     end
 end
 

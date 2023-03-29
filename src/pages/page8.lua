@@ -15,29 +15,11 @@ local earth
 local sun
 local limit_left, limit_right, limit_Up, limit_bottom
 
-local buttonSound, magnetHitSound
-
-local buttonSoundOptions = {
-    channel = 1,
-    loops = 0,
-    duration = 1000,
-    fadein = 0,
-    onComplete = function() audio.dispose(buttonSound) end
-}
-
-local magnetHitSoundOptions = {
-    channel = 1,
-    loops = 0,
-    duration = 1000 * 60 * 10,
-    fadein = 0
-}
-
 
 -- display.setDrawMode("debug")
 
 local function onBackPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
-        audio.play( buttonSound, buttonSoundOptions)
         composer.gotoScene("src.pages.page7", "slideRight")
 
         return true
@@ -46,7 +28,6 @@ end
 
 local function onNextPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
-        audio.play( buttonSound, buttonSoundOptions)
         composer.gotoScene(string.format("src.pages.endpage"), "slideLeft")
 
         return true
@@ -78,8 +59,7 @@ end
 
 
 function scene:create(event)
-    local sceneGroup = self.view
-    buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
+    local sceneGroup = self.view    
 
     background = display.newImage('src/assets/images/page2BackGround.png', display.actualContentWidth, display
         .actualContentHeight)
@@ -107,49 +87,49 @@ function scene:create(event)
     sun.y = display.contentHeight * 0.6
     sun:scale(0.5, 0.5)
     sceneGroup:insert(sun)
-    
+
     earth = display.newImage('src/assets/images/earth2.png', display.actualContentWidth,
-    display.actualContentHeight)
+        display.actualContentHeight)
     earth.x = display.contentWidth * 2 / 10
     earth.y = display.contentHeight * 0.7
     earth:scale(0.7, 0.7)
     sceneGroup:insert(earth)
-    
+
     raio_solar = display.newImage('src/assets/images/raio_solar.png', display.actualContentWidth,
-    display.actualContentHeight)
+        display.actualContentHeight)
     raio_solar.x = display.contentWidth * 9 / 10
     raio_solar.y = display.contentHeight * 0.6
     raio_solar:scale(0.1, 0.1)
     sceneGroup:insert(raio_solar)
-    
+
     limit_left = display.newRect(-40, 0, 40, display.contentHeight)
     limit_left.anchorX = 0
     limit_left.anchorY = 0
     sceneGroup:insert(limit_left)
-    
+
     limit_right = display.newRect(display.contentWidth, 0, 40, display.contentHeight)
     limit_right.anchorX = 0
     limit_right.anchorY = 0
     sceneGroup:insert(limit_right)
-    
+
     limit_bottom = display.newRect(0, display.contentHeight, display.contentWidth, 40)
     limit_bottom.anchorX = 0
     limit_bottom.anchorY = 0
     sceneGroup:insert(limit_bottom)
-    
+
     limit_Up = display.newRect(0, -40, display.contentWidth, 40)
     limit_Up.anchorX = 0
     limit_Up.anchorY = 0
     sceneGroup:insert(limit_Up)
-    
+
     backButton = display.newImage('src/assets/buttons/lightButtonLeft.png', display.contentWidth,
-    display.contentWidth)
+        display.contentWidth)
     backButton.x = display.contentWidth * 0.1
     backButton.y = display.contentHeight * 0.9
     sceneGroup:insert(backButton)
-    
+
     forwardButton = display.newImage('src/assets/buttons/lightButtonRight.png', display.contentWidth,
-    display.contentWidth)
+        display.contentWidth)
     forwardButton.x = display.contentWidth * 0.9
     forwardButton.y = display.contentHeight * 0.9
     sceneGroup:insert(forwardButton)
@@ -159,19 +139,15 @@ function scene:show(event)
     local sceneGroup = self.view
     local phase = event.phase
 
-    if (phase == "will") then
-        
-    elseif (phase == "did") then
-        buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
-        magnetHitSound = audio.loadSound( "src/assets/sounds/solar-wind.mp3")
+    if (phase == "will") then        
         backButton.touch = onBackPage
         backButton:addEventListener("touch", backButton)
-        audio.play(magnetHitSound, magnetHitSoundOptions)
+
         physics.start()
         physics.setGravity(0, 0)
-        physics.addBody(earth, "static", { density = 1.6, friction = 0.5, radius= 30})
-        physics.addBody(sun, "static", { density = 1.6, friction = 0.5, radius= 40})
-        physics.addBody(raio_solar, "dinamic", { density = 1.6, radius = 20, bounce=0.7})
+        physics.addBody(earth, "static", { density = 1.6, friction = 0.5, radius = 30 })
+        physics.addBody(sun, "static", { density = 1.6, friction = 0.5, radius = 40 })
+        physics.addBody(raio_solar, "dinamic", { density = 1.6, radius = 20, bounce = 0.7 })
         physics.addBody(limit_left, "static", { density = 1.6, friction = 0.5, bounce = 0.2 })
         physics.addBody(limit_right, "static", { density = 1.6, friction = 0.5, bounce = 0.2 })
         physics.addBody(limit_bottom, "static", { density = 1.6, friction = 0.5, bounce = 0.2 })
@@ -181,6 +157,8 @@ function scene:show(event)
         forwardButton:addEventListener("touch", forwardButton)
         Runtime:addEventListener("accelerometer", moveMeteor)
         Runtime:addEventListener("enterFrame", repelirMeteoro)
+    elseif (phase == "did") then
+        
     end
 end
 

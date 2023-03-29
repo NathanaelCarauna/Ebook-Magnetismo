@@ -238,8 +238,6 @@ function scene:show(event)
     local phase = event.phase
 
     if (phase == "will") then
-
-    elseif (phase == "did") then
         buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
         magnetHitSound = audio.loadSound("src/assets/sounds/knife-hit.mp3")
         backButton.touch = onBackPage
@@ -265,20 +263,6 @@ function scene:show(event)
         knife.isFixedRotation = true
         physics.addBody(magnet, "dinamic", { radius = 20, friction = 1 })
         magnet.isFixedRotation = true
-
-        -- physics.addBody(newMagnet1, "dinamic", { radius = 20, friction = 1 })
-        -- newMagnet1.isFixedRotation = true
-        -- physics.addBody(newMagnet2, "dinamic", { radius = 20, friction = 1 })
-        -- newMagnet2.isFixedRotation = true
-        -- physics.addBody(newMagnet3, "dinamic", { radius = 20, friction = 1 })
-        -- newMagnet3.isFixedRotation = true
-        -- physics.addBody(newMagnet4, "dinamic", { radius = 20, friction = 1 })
-        -- newMagnet4.isFixedRotation = true
-        -- physics.addBody(newMagnet5, "dinamic", { radius = 20, friction = 1 })
-        -- newMagnet5.isFixedRotation = true
-        -- physics.addBody(newMagnet6, "dinamic", { radius = 20, friction = 1 })
-        -- newMagnet6.isFixedRotation = true
-
 
         forwardButton.touch = onNextPage
         forwardButton:addEventListener("touch", forwardButton)
@@ -321,6 +305,8 @@ function scene:show(event)
         newMagnet6:addEventListener("touch", newMagnet6)
         newMagnet6.collision = onLocalCollision
         newMagnet6:addEventListener("collision")
+    elseif (phase == "did") then
+ 
     end
 end
 

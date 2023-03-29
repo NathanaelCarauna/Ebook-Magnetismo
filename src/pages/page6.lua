@@ -164,8 +164,6 @@ function scene:show(event)
     local phase = event.phase
 
     if (phase == "will") then
-
-    elseif (phase == "did") then
         backButton.touch = onBackPage
         backButton:addEventListener("touch", backButton)
         buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
@@ -208,6 +206,8 @@ function scene:show(event)
         clip3:addEventListener("collision")
         clip4.collision = onCollision
         clip4:addEventListener("collision")
+    elseif (phase == "did") then
+       
     end
 end
 

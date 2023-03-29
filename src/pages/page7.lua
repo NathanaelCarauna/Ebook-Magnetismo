@@ -180,8 +180,6 @@ function scene:show(event)
     local phase = event.phase
 
     if (phase == "will") then
-
-    elseif (phase == "did") then
         buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
         magnetHitSound = audio.loadSound( "src/assets/sounds/electric-hum.mp3")
         backButton.touch = onBackPage
@@ -194,6 +192,8 @@ function scene:show(event)
         switch_device:addEventListener("touch", turnOnOff)
         switch_device.fill.effect = "filter.grayscale"
         switch_device.isOn = false
+    elseif (phase == "did") then
+       
     end
 end
 

@@ -54,11 +54,11 @@ function scene:show(event)
 	local phase = event.phase
 
 	if (phase == "will") then
-
-	elseif (phase == "did") then
 		forwardButton.touch = onNextPage
 		forwardButton:addEventListener("touch", forwardButton)
 		buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
+	elseif (phase == "did") then
+		
 	end
 end
 

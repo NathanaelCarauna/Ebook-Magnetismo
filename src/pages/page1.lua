@@ -191,8 +191,6 @@ function scene:show(event)
     local phase = event.phase
 
     if (phase == "will") then
-
-    elseif (phase == "did") then
         buttonSound = audio.loadSound("src/assets/sounds/click-button.mp3")
         metalHitSound = audio.loadSound("src/assets/sounds/metal-hit.mp3")
         backButton.touch = onBackPage
@@ -227,6 +225,8 @@ function scene:show(event)
         rock2:addEventListener("touch", onRock2Touch)
         rock3:addEventListener("touch", onRock3Touch)
         Runtime:addEventListener("enterFrame", atrairObjeto)
+    elseif (phase == "did") then
+        
     end
 end
 
