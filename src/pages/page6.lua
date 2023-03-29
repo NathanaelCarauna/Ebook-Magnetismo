@@ -86,7 +86,7 @@ function scene:create(event)
 
     local instructionsText = display.newImage('src/assets/texts/page6Instructions.png', display.actualContentWidth,
         display.actualContentHeight)
-    instructionsText.x = display.contentWidth * 2 / 10
+    instructionsText.x = display.contentWidth * 0.4
     instructionsText.y = display.contentHeight * 0.48
     sceneGroup:insert(instructionsText)
 
@@ -100,7 +100,7 @@ function scene:create(event)
         display.actualContentHeight)
     magnet.id = "magnet"
     magnet.x = display.contentWidth * 0.5
-    magnet.y = display.contentHeight * 0.5
+    magnet.y = display.contentHeight * 0.6
     sceneGroup:insert(magnet)
 
     clip1 = display.newImage('src/assets/images/clip.png', display.actualContentWidth,
@@ -171,7 +171,7 @@ function scene:show(event)
         buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
 
         magnet.x = display.contentWidth * 0.5
-        magnet.y = display.contentHeight * 0.5
+        magnet.y = display.contentHeight * 0.6
         clip1.x = display.contentWidth * 0.2
         clip1.y = display.contentHeight * 0.85
         clip2.x = display.contentWidth * 0.4
