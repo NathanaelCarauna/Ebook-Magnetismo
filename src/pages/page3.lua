@@ -156,7 +156,7 @@ function scene:create(event)
     local text = display.newImage('src/assets/texts/page3Text.png', display.actualContentWidth,
         display.actualContentHeight)
     text.x = display.contentWidth * 5 / 10
-    text.y = display.contentHeight * 2 / 20
+    text.y = display.contentHeight * 0.15
     sceneGroup:insert(text)
 
     magnet = display.newImage('src/assets/images/squareMagnet.png', display.contentWidth,
