@@ -10,7 +10,7 @@ local device
 local switch_device
 local spark
 
-local buttonSound
+local buttonSound, magnetHitSound
 
 local buttonSoundOptions = {
     channel = 1,
@@ -18,6 +18,13 @@ local buttonSoundOptions = {
     duration = 1000,
     fadein = 0,
     onComplete = function() audio.dispose(buttonSound) end
+}
+
+local magnetHitSoundOptions = {
+    channel = 1,
+    loops = 0,
+    duration = 3000,
+    fadein = 0
 }
 
 local function onBackPage(self, event)
@@ -60,6 +67,7 @@ local function turnOnOff(event)
         if switch_device.isOn then
             turnDeviceOFF()
         else
+            audio.play(magnetHitSound, magnetHitSoundOptions)
             turnDeviceON()
         end
     end
@@ -175,6 +183,7 @@ function scene:show(event)
 
     elseif (phase == "did") then
         buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
+        magnetHitSound = audio.loadSound( "src/assets/sounds/electric-hum.mp3")
         backButton.touch = onBackPage
         backButton:addEventListener("touch", backButton)
 
