@@ -1,6 +1,7 @@
 local composer = require("composer")
 local scene = composer.newScene()
 
+--Variáveis de maior escopo
 local backButton
 local forwardButton
 local background
@@ -9,9 +10,9 @@ local bussola
 local device
 local switch_device
 local spark
-
 local buttonSound, magnetHitSound
 
+--Opções de audio
 local buttonSoundOptions = {
     channel = 1,
     loops = 0,
@@ -27,6 +28,7 @@ local magnetHitSoundOptions = {
     fadein = 0
 }
 
+--VOltar imagem
 local function onBackPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
         audio.play( buttonSound, buttonSoundOptions)
@@ -35,6 +37,8 @@ local function onBackPage(self, event)
         return true
     end
 end
+
+--Mover spark
 local function animateImage()
     print("animateImage called")
     transition.to(spark, { x = display.contentWidth * 0.22, y = display.contentHeight * 0.20, time = 1000 })
@@ -48,6 +52,7 @@ local function animateImage()
     end)
 end
 
+--Rotacionar ponteiro da bussola
 local function updateCompass(event)
     if switch_device.isOn == false and event.xGravity ~= nil then
         local rotation = display.getCurrentStage().contentWidth / display.getCurrentStage().contentHeight
@@ -62,6 +67,7 @@ local function updateCompass(event)
     end
 end
 
+--Ligar e desligar dispositivo
 local function turnOnOff(event)
     if event.phase == "ended" then
         if switch_device.isOn then
@@ -72,12 +78,15 @@ local function turnOnOff(event)
         end
     end
 end
+
+--Ligar despositivo
 function turnDeviceOFF()
     switch_device.isOn = false
     switch_device.fill.effect = "filter.grayscale"
     spark.isVisible = false
 end
 
+--Desligar dispositivo
 function turnDeviceON()
     switch_device.fill.effect = "filter.bloom"
     switch_device.isOn = true
@@ -90,6 +99,7 @@ function turnDeviceON()
     end
 end
 
+--Avançar página
 local function onNextPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
         audio.play( buttonSound, buttonSoundOptions)
@@ -104,6 +114,7 @@ function scene:create(event)
     local sceneGroup = self.view
     buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
 
+    --Plano de fundo
     background = display.newImage('src/assets/images/page7Background.png', display.actualContentWidth, display
         .actualContentHeight)
     background.anchorX = 0
@@ -112,18 +123,21 @@ function scene:create(event)
     background.y = 0
     sceneGroup:insert(background)
 
+    -- texto de Instruções
     local instructionsText = display.newImage('src/assets/texts/page7Instructions.png', display.actualContentWidth,
         display.actualContentHeight)
     instructionsText.x = display.contentWidth * 0.5
     instructionsText.y = display.contentHeight * 0.02
     sceneGroup:insert(instructionsText)
 
+    --Texto explicativo
     local text = display.newImage('src/assets/texts/page7Text.png', display.actualContentWidth,
         display.actualContentHeight)
     text.x = display.contentWidth * 5 / 10
     text.y = display.contentHeight * 0.74
     sceneGroup:insert(text)
 
+    --Dispositivo
     device = display.newImage('src/assets/images/device.png', display.actualContentWidth,
         display.actualContentHeight)
     device.x = display.contentWidth * 5 / 10 + 5
@@ -131,6 +145,7 @@ function scene:create(event)
     device:scale(1, 1)
     sceneGroup:insert(device)
 
+    --Corpo da bussola
     bussola = display.newImage('src/assets/images/bussola.png', display.actualContentWidth,
         display.actualContentHeight)
     bussola.x = display.contentWidth * 5 / 10
@@ -138,6 +153,7 @@ function scene:create(event)
     bussola:scale(0.05, 0.05)
     sceneGroup:insert(bussola)
 
+    --Ponteiro da bussola
     ponteiro = display.newImage('src/assets/images/bussola_ponteiro.png', display.actualContentWidth,
         display.actualContentHeight)
     ponteiro.x = display.contentWidth * 5 / 10
@@ -145,6 +161,7 @@ function scene:create(event)
     ponteiro:scale(0.05, 0.05)
     sceneGroup:insert(ponteiro)
 
+    --Eletricidade
     spark = display.newImage('src/assets/images/spark.png', display.actualContentWidth,
         display.actualContentHeight)
     spark.x = display.contentWidth * 0.77
@@ -153,6 +170,7 @@ function scene:create(event)
     spark.isVisible = false
     sceneGroup:insert(spark)
 
+    --Botão para controlar dispositivo
     switch_device = display.newImage('src/assets/images/switch_device.png', display.actualContentWidth,
         display.actualContentHeight)
     switch_device.x = display.contentWidth * 7 / 10
@@ -161,7 +179,7 @@ function scene:create(event)
     switch_device:scale(0.1, 0.1)
     sceneGroup:insert(switch_device)
 
-
+    --Botões de navegação
     backButton = display.newImage('src/assets/buttons/lightButtonLeft.png', display.contentWidth,
         display.contentWidth)
     backButton.x = display.contentWidth * 0.1
@@ -180,8 +198,11 @@ function scene:show(event)
     local phase = event.phase
 
     if (phase == "will") then
+        --Carregar audios
         buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
         magnetHitSound = audio.loadSound( "src/assets/sounds/electric-hum.mp3")
+
+        --Adicionar eventos
         backButton.touch = onBackPage
         backButton:addEventListener("touch", backButton)
 
@@ -190,6 +211,8 @@ function scene:show(event)
         Runtime:addEventListener("accelerometer", updateCompass)
         Runtime:addEventListener("enterFrame", updateCompass)
         switch_device:addEventListener("touch", turnOnOff)
+
+        --Reiniciar estado do botão
         switch_device.fill.effect = "filter.grayscale"
         switch_device.isOn = false
     elseif (phase == "did") then
@@ -202,6 +225,8 @@ function scene:hide(event)
     local phase = event.phase
 
     if (phase == "will") then
+
+        --Remover eventos
         backButton:removeEventListener("touch", backButton)
         forwardButton:removeEventListener("touch", forwardButton)
         background:removeEventListener("tap", background)

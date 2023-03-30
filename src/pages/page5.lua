@@ -1,15 +1,16 @@
 local composer = require("composer")
 local scene = composer.newScene()
 
+-- Variáveis de maior escopo
 local backButton
 local forwardButton
 local background
 local canShake
-local currentIndex = 1
+local currentImageIndex = 1
 local images = {}
-
 local buttonSound, magnetHitSound
 
+-- Opções de audio
 local buttonSoundOptions = {
     channel = 1,
     loops = 0,
@@ -24,7 +25,7 @@ local magnetHitSoundOptions = {
     fadein = 0
 }
 
-
+--Voltar página
 local function onBackPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
         audio.play( buttonSound, buttonSoundOptions)
@@ -34,6 +35,7 @@ local function onBackPage(self, event)
     end
 end
 
+-- Avançar página
 local function onNextPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
         audio.play( buttonSound, buttonSoundOptions)
@@ -43,11 +45,12 @@ local function onNextPage(self, event)
     end
 end
 
+-- Trocar imagem com o shake
 local function changePowderImage(event)        
     if event.isShake then
         
         if canShake == true then
-            currentIndex = currentIndex + 1
+            currentImageIndex = currentImageIndex + 1
             audio.play(magnetHitSound, magnetHitSoundOptions)
             canShake = false
         end
@@ -55,20 +58,22 @@ local function changePowderImage(event)
         timer.performWithDelay(1000, function ()
             canShake = true            
         end)
-        if currentIndex > #images then            
-            currentIndex = #images
+        if currentImageIndex > #images then            
+            currentImageIndex = #images
         end
         -- exibir a nova imagem
         for i = 1, #images do
-            images[i].isVisible = (i == currentIndex)
+            images[i].isVisible = (i == currentImageIndex)
         end
     end
 end
 
 function scene:create(event)
     local sceneGroup = self.view
+    --Carregar audio
     buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
 
+    --Plano de fundo
     background = display.newImage('src/assets/images/page2BackGround.png', display.actualContentWidth, display
         .actualContentHeight)
     background.anchorX = 0
@@ -77,18 +82,21 @@ function scene:create(event)
     background.y = 0
     sceneGroup:insert(background)
 
+    --Texto de instruções
     local instructionsText = display.newImage('src/assets/texts/page5Instructions.png', display.actualContentWidth,
     display.actualContentHeight)
     instructionsText.x = display.contentWidth * 0.4
     instructionsText.y = display.contentHeight * 0.02
     sceneGroup:insert(instructionsText)
 
+    -- Texto explicativo
     local text = display.newImage('src/assets/texts/page5Text.png', display.actualContentWidth,
     display.actualContentHeight)
     text.x = display.contentWidth * 5/10
     text.y = display.contentHeight * 0.67
     sceneGroup:insert(text)
 
+    --Imagens a serem trocadas
     magnetPowder01 = display.newImage('src/assets/images/magnetPowder01.png', display.contentWidth,
         display.contentWidth)
     magnetPowder01.x = display.contentWidth * 0.5
@@ -134,6 +142,7 @@ function scene:create(event)
     sceneGroup:insert(magnetPowder05)
     table.insert(images, magnetPowder05)
 
+    -- Botões de navegação
     backButton = display.newImage('src/assets/buttons/lightButtonLeft.png', display.contentWidth,
         display.contentWidth)
     backButton.x = display.contentWidth * 0.1
@@ -152,20 +161,26 @@ function scene:show(event)
     local phase = event.phase
 
     if (phase == "will") then
-        canShake = true
+        -- Carrega audios
         buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
         magnetHitSound = audio.loadSound("src/assets/sounds/powder-shake.mp3")
+        
+        --Inicializa variável para permitir troca de imagens
+        canShake = true
+        
         backButton.touch = onBackPage
         backButton:addEventListener("touch", backButton)
-
-        currentIndex = 1
-        for i = 1, #images do
-            images[i].isVisible = (i == currentIndex)
-        end
         
+        -- Reinicia as imagens
+        currentImageIndex = 1
+        for i = 1, #images do
+            images[i].isVisible = (i == currentImageIndex)
+        end
+
+        -- adiciona eventos
         forwardButton.touch = onNextPage
         forwardButton:addEventListener("touch", forwardButton)
-        system.setAccelerometerInterval( 500 )
+        system.setAccelerometerInterval( 100 )
         Runtime:addEventListener("accelerometer", changePowderImage)
     elseif (phase == "did") then
        
@@ -177,6 +192,7 @@ function scene:hide(event)
     local phase = event.phase
 
     if (phase == "will") then
+        --Remove eventos
         backButton:removeEventListener("touch", backButton)
         forwardButton:removeEventListener("touch", forwardButton)
         background:removeEventListener("tap", background)

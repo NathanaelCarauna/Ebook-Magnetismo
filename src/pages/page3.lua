@@ -3,6 +3,7 @@ local physics = require("physics")
 
 local scene = composer.newScene()
 
+-- Variáveis de maior escopo
 local backButton
 local forwardButton
 local background
@@ -14,9 +15,9 @@ local newMagnet3
 local newMagnet4
 local newMagnet5
 local newMagnet6
-
 local buttonSound, magnetHitSound
 
+-- Opções de audio para o botão
 local buttonSoundOptions = {
     channel = 1,
     loops = 0,
@@ -25,13 +26,15 @@ local buttonSoundOptions = {
     onComplete = function() audio.dispose(buttonSound) end
 }
 
-local magnetHitSoundOptions = {
+-- Opções de audio para corte
+local sliceSoundOptions = {
     channel = 1,
     loops = 0,
     duration = 1000,
     fadein = 0
 }
 
+-- Voltar página
 local function onBackPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
         audio.play( buttonSound, buttonSoundOptions)
@@ -41,6 +44,7 @@ local function onBackPage(self, event)
     end
 end
 
+-- Avançar página
 local function onNextPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
         audio.play( buttonSound, buttonSoundOptions)
@@ -50,6 +54,7 @@ local function onNextPage(self, event)
     end
 end
 
+-- Aplica arrasto
 local function onDragObj(self, event)
     if event.phase == "began" then
         display.getCurrentStage():setFocus(self)
@@ -65,6 +70,7 @@ local function onDragObj(self, event)
     end
 end
 
+-- Detecta colisão entre faca e imãs e gera novos imãs
 function onLocalCollision(self, event)
     if (event.phase == "began") then
         local other = event.other
@@ -81,7 +87,7 @@ function onLocalCollision(self, event)
                     newMagnet2.y = magnet.y - 80
                     newMagnet2.isVisible = true
 
-                    audio.play(magnetHitSound, magnetHitSoundOptions)
+                    audio.play(magnetHitSound, sliceSoundOptions)
                     physics.removeBody( magnet )
                     physics.addBody(newMagnet1, "dinamic", { radius = 50, friction = 1 })
                     newMagnet1.isFixedRotation = true
@@ -102,7 +108,7 @@ function onLocalCollision(self, event)
                     newMagnet4.y = newMagnet1.y + 26
                     newMagnet4.isVisible = true
 
-                    audio.play(magnetHitSound, magnetHitSoundOptions)
+                    audio.play(magnetHitSound, sliceSoundOptions)
                     physics.removeBody(newMagnet1)
                     physics.addBody(newMagnet3, "dinamic", { radius = 25, friction = 1 })
                     newMagnet3.isFixedRotation = true
@@ -123,7 +129,7 @@ function onLocalCollision(self, event)
                     newMagnet6.y = newMagnet2.y + 26
                     newMagnet6.isVisible = true
 
-                    audio.play(magnetHitSound, magnetHitSoundOptions)
+                    audio.play(magnetHitSound, sliceSoundOptions)
                     physics.removeBody(newMagnet2)
                     physics.addBody(newMagnet5, "dinamic", { radius = 25, friction = 1 })
                     newMagnet5.isFixedRotation = true
@@ -139,6 +145,7 @@ function scene:create(event)
     local sceneGroup = self.view
     buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
 
+    -- Imagem de fundo
     background = display.newImage('src/assets/images/page3Background.png', display.actualContentWidth, display
         .actualContentHeight)
     background.anchorX = 0
@@ -147,18 +154,21 @@ function scene:create(event)
     background.y = 0
     sceneGroup:insert(background)
 
+    -- Texto de instrução
     local instructionsText = display.newImage('src/assets/texts/page3Instructions.png', display.actualContentWidth,
         display.actualContentHeight)
     instructionsText.x = display.contentWidth * 0.32
     instructionsText.y = display.contentHeight * 0.86
     sceneGroup:insert(instructionsText)
 
+    -- Texto explicativo
     local text = display.newImage('src/assets/texts/page3Text.png', display.actualContentWidth,
         display.actualContentHeight)
     text.x = display.contentWidth * 5 / 10
     text.y = display.contentHeight * 0.15
     sceneGroup:insert(text)
 
+    -- ima principal
     magnet = display.newImage('src/assets/images/squareMagnet.png', display.contentWidth,
         display.contentWidth)
     magnet.id = 'magnet'
@@ -168,6 +178,7 @@ function scene:create(event)
     sceneGroup:insert(magnet)
     magnet.isVisible = false
 
+    -- Imãs das divisões
     newMagnet1 = display.newImage('src/assets/images/squareMagnet.png', display.contentWidth,
         display.contentWidth)
     newMagnet1.id = 'newMagnet1'    
@@ -182,21 +193,19 @@ function scene:create(event)
     newMagnet2:scale(1, 1)
     sceneGroup:insert(newMagnet2)
 
-
     newMagnet3 = display.newImage('src/assets/images/squareMagnet.png', display.contentWidth,
         display.contentWidth)
     newMagnet3.id = 'newMagnet3'
     newMagnet3.isVisible = false
     newMagnet3:scale(1, 0.5)
     sceneGroup:insert(newMagnet3)
-
+ 
     newMagnet4 = display.newImage('src/assets/images/squareMagnet.png', display.contentWidth,
         display.contentWidth)
     newMagnet4.id = 'newMagnet4'
     newMagnet4.isVisible = false
     newMagnet4:scale(1, 0.5)
     sceneGroup:insert(newMagnet4)
-
 
     newMagnet5 = display.newImage('src/assets/images/squareMagnet.png', display.contentWidth,
         display.contentWidth)
@@ -212,6 +221,7 @@ function scene:create(event)
     sceneGroup:insert(newMagnet6)
     newMagnet6.isVisible = false
 
+    --Faca
     knife = display.newImage('src/assets/images/Knife.png', display.contentWidth,
         display.contentWidth)
     knife.id = 'knife'
@@ -219,7 +229,7 @@ function scene:create(event)
     knife.isVisible = false
     sceneGroup:insert(knife)
 
-
+    -- Botões de navegação
     backButton = display.newImage('src/assets/buttons/blackButtonLeft.png', display.contentWidth,
         display.contentWidth)
     backButton.x = display.contentWidth * 0.1
@@ -238,8 +248,10 @@ function scene:show(event)
     local phase = event.phase
 
     if (phase == "will") then
+        -- Carregar audio
         buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
         magnetHitSound = audio.loadSound("src/assets/sounds/knife-hit.mp3")
+
         backButton.touch = onBackPage
         backButton:addEventListener("touch", backButton)
 
@@ -264,13 +276,13 @@ function scene:show(event)
         physics.addBody(magnet, "dinamic", { radius = 20, friction = 1 })
         magnet.isFixedRotation = true
 
+        -- Adiciona eventos
         forwardButton.touch = onNextPage
         forwardButton:addEventListener("touch", forwardButton)
         knife.touch = onDragObj
         knife:addEventListener("touch", knife)
         knife.collision = onLocalCollision
         knife:addEventListener("collision")
-
         magnet.touch = onDragObj
         magnet:addEventListener("touch", magnet)
         magnet.collision = onLocalCollision
@@ -315,6 +327,7 @@ function scene:hide(event)
     local phase = event.phase
 
     if (phase == "will") then
+        --Remove eventos
         backButton:removeEventListener("touch", backButton)
         forwardButton:removeEventListener("touch", forwardButton)
         background:removeEventListener("tap", background)

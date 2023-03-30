@@ -6,6 +6,7 @@ local background
 
 local buttonSound
 
+-- Definir opções de audio do botão
 local buttonSoundOptions = {
     channel = 1,
     loops = 0,
@@ -14,6 +15,7 @@ local buttonSoundOptions = {
     onComplete = function() audio.dispose(buttonSound) end
 }
 
+-- Função para retornar para para página anterior
 local function onBackPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
         audio.play( buttonSound, buttonSoundOptions)
@@ -23,7 +25,7 @@ local function onBackPage(self, event)
     end
 end
 
-
+-- Criar objetos na cena
 function scene:create(event)
     local sceneGroup = self.view
     buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
@@ -50,6 +52,7 @@ function scene:create(event)
 
 end
 
+-- Função chamada ao renderizar a página
 function scene:show(event)
     local sceneGroup = self.view
     local phase = event.phase
@@ -63,6 +66,7 @@ function scene:show(event)
     end
 end
 
+-- Função chamada ao sair da página
 function scene:hide(event)
     local sceneGroup = self.view
     local phase = event.phase

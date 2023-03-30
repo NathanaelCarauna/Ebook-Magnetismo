@@ -5,6 +5,7 @@ local ATTRACTION_DISTANCE = 300
 
 local scene = composer.newScene()
 
+-- Variáveis de maior escopo
 local backButton
 local forwardButton
 local background
@@ -13,9 +14,9 @@ local metal
 local rock1
 local rock2
 local rock3
-
 local buttonSound, metalHitSound
 
+-- Opções de audio do botão
 local buttonSoundOptions = {
     channel = 1,
     loops = 0,
@@ -24,6 +25,7 @@ local buttonSoundOptions = {
     onComplete = function() audio.dispose(buttonSound) end
 }
 
+-- Opções de audio de colisão
 local metalHitSoundOptions = {
     channel = 1,
     loops = 0,
@@ -31,6 +33,7 @@ local metalHitSoundOptions = {
     fadein = 0
 }
 
+-- Retorna para página anterior
 local function onBackPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
         audio.play(buttonSound, buttonSoundOptions)
@@ -40,6 +43,7 @@ local function onBackPage(self, event)
     end
 end
 
+-- Avança para a próxima página
 local function onNextPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
         audio.play(buttonSound, buttonSoundOptions)
@@ -49,22 +53,27 @@ local function onNextPage(self, event)
     end
 end
 
+-- Adiciona arrasto à magnetita
 local function onMagnetitaTouch(event)
     onDragObj(event, magnetita)
 end
 
+-- Adiciona arrasto à rock3
 local function onRock3Touch(event)
     onDragObj(event, rock3)
 end
 
+-- Adiciona arrasto à rock2
 local function onRock2Touch(event)
     onDragObj(event, rock2)
 end
 
+-- Adiciona arrasto à rock1
 local function onRock1Touch(event)
     onDragObj(event, rock1)
 end
 
+-- arrasto de objeto
 function onDragObj(event, obj)
     if event.phase == "began" then
         display.getCurrentStage():setFocus(obj)
@@ -80,7 +89,8 @@ function onDragObj(event, obj)
     end
 end
 
-local function atrairObjeto()
+-- Atrair magnetita para a bola de ferro se a distancia for menor que definida
+local function atractObj()
     local distancia = math.sqrt((magnetita.x - metal.x) ^ 2 + (magnetita.y - metal.y) ^ 2)
     if distancia < ATTRACTION_DISTANCE then
         local forca = -200 * (100 - distancia)
@@ -92,16 +102,17 @@ local function atrairObjeto()
     end
 end
 
+-- impedir que a magnetita sobreponha a bola de metal
 local function onCollision(event)
     if (event.phase == "began") then
-        magnetita:removeEventListener("enterFrame", atrairObjeto)
+        magnetita:removeEventListener("enterFrame", atractObj)
         magnetita.x = metal.x
         magnetita.y = metal.y
         if event.other == metal then
             audio.play(metalHitSound, metalHitSoundOptions)
         end
     elseif (event.phase == "ended") then
-        magnetita:addEventListener("enterFrame", atrairObjeto)
+        magnetita:addEventListener("enterFrame", atractObj)
     end
 end
 
@@ -191,8 +202,12 @@ function scene:show(event)
     local phase = event.phase
 
     if (phase == "will") then
+
+        -- Carregar audio
         buttonSound = audio.loadSound("src/assets/sounds/click-button.mp3")
         metalHitSound = audio.loadSound("src/assets/sounds/metal-hit.mp3")
+
+        -- Adiciona função aos botões de navegação
         backButton.touch = onBackPage
         backButton:addEventListener("touch", backButton)
 
@@ -219,12 +234,13 @@ function scene:show(event)
         physics.addBody(rock2, "dinamic", { density = 3.0, friction = 1, radius = 30 })
         physics.addBody(rock3, "dinamic", { density = 3.0, friction = 1, radius = 60 })
 
+        -- Adiciona eventos para os objetos
         magnetita:addEventListener("touch", onMagnetitaTouch)
         magnetita:addEventListener("collision", onCollision)
         rock1:addEventListener("touch", onRock1Touch)
         rock2:addEventListener("touch", onRock2Touch)
         rock3:addEventListener("touch", onRock3Touch)
-        Runtime:addEventListener("enterFrame", atrairObjeto)
+        Runtime:addEventListener("enterFrame", atractObj)
     elseif (phase == "did") then
         
     end
@@ -237,7 +253,7 @@ function scene:hide(event)
     if (phase == "will") then
         physics.stop()
 
-        Runtime:removeEventListener("enterFrame", atrairObjeto)
+        Runtime:removeEventListener("enterFrame", atractObj)
         backButton:removeEventListener("touch", backButton)
         forwardButton:removeEventListener("touch", forwardButton)
         background:removeEventListener("tap", background)

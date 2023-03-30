@@ -4,6 +4,7 @@ local scene = composer.newScene()
 local forwardButton
 local buttonSound
 
+-- Opções do audio do butão
 local buttonSoundOptions = {
     channel = 1,
     loops = 0,
@@ -12,6 +13,7 @@ local buttonSoundOptions = {
     onComplete = function() audio.dispose(buttonSound) end
 }
 
+-- Função para mudar para a próxima página
 local function onNextPage(self, event)
 	if event.phase == "ended" or event.phase == "cancelled" then
 		audio.play( buttonSound, buttonSoundOptions)
@@ -21,10 +23,12 @@ local function onNextPage(self, event)
 	end
 end
 
+-- Função onde os objetos estão sendo criados
 function scene:create(event)
 	local sceneGroup = self.view
 	buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
 
+	-- background
 	local background = display.newImage(sceneGroup, "src/assets/images/HomeBackground.png",
 	display.actualContentWidth, display.actualContentHeight)
 	background.anchorX = 0
@@ -33,6 +37,7 @@ function scene:create(event)
 	background.y = 0
 	sceneGroup:insert(background)
 
+	-- título
 	local title = display.newImage('src/assets/texts/HomeTitle.png', display.contentWidth, display.contentWidth)
 	title.x = display.contentWidth * 1/2
 	title.y = display.contentHeight * 13/20
@@ -40,7 +45,7 @@ function scene:create(event)
 	sceneGroup:insert(title)
 
 
-
+	-- Botão de avançar página
 	forwardButton = display.newImage('src/assets/buttons/lightButtonRight.png', display.contentWidth,
 	display.contentWidth)
 	forwardButton.x = display.contentWidth * 0.9
@@ -49,6 +54,7 @@ function scene:create(event)
 	sceneGroup:insert(forwardButton)
 end
 
+--Função chamada ao renderizar uma página
 function scene:show(event)
 	local sceneGroup = self.view
 	local phase = event.phase
@@ -62,6 +68,7 @@ function scene:show(event)
 	end
 end
 
+--Função chamada ao sair de uma página
 function scene:hide(event)
 	local sceneGroup = self.view
 	local phase = event.phase

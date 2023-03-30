@@ -1,23 +1,19 @@
 local composer = require("composer")
 local scene = composer.newScene()
 local physics = require("physics")
--- physics.start()
--- physics.setGravity(0, 0)
 
-
+--Variáveis de maior escopo
 local DISTANCIA_RELPUSAO = 150
 
 local backButton
 local forwardButton
 local background
-local raio_solar
+local sun_particle
 local earth
 local sun
 local limit_left, limit_right, limit_Up, limit_bottom
 
-
--- display.setDrawMode("debug")
-
+--Voltar página
 local function onBackPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
         composer.gotoScene("src.pages.page7", "slideRight")
@@ -26,6 +22,7 @@ local function onBackPage(self, event)
     end
 end
 
+--Avançar página
 local function onNextPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
         composer.gotoScene(string.format("src.pages.endpage"), "slideLeft")
@@ -34,26 +31,28 @@ local function onNextPage(self, event)
     end
 end
 
-local function moveMeteor(event)
+--Mover particula de acordo com movimento do celular
+local function moveParticle(event)
     local xGravity = event.xGravity
     local zGravity = event.yGravity
 
     local moveX = xGravity * 5  -- multiplicador para controlar a velocidade de movimento
     local moveY = -zGravity * 5 -- multiplicador para controlar a velocidade de movimento
 
-    raio_solar.x = raio_solar.x + moveX
-    raio_solar.y = raio_solar.y + moveY
+    sun_particle.x = sun_particle.x + moveX
+    sun_particle.y = sun_particle.y + moveY
 end
 
-local function repelirMeteoro()
-    local distancia = math.sqrt((raio_solar.x - earth.x) ^ 2 + (raio_solar.y - earth.y) ^ 2)
+--Repelir particula
+local function repelirParticle()
+    local distancia = math.sqrt((sun_particle.x - earth.x) ^ 2 + (sun_particle.y - earth.y) ^ 2)
     if distancia < DISTANCIA_RELPUSAO then
         local forca = 200 * (100 - distancia)
-        local direcaoX = earth.x - raio_solar.x
-        local direcaoY = earth.y - raio_solar.y
-        raio_solar:applyForce(direcaoX * forca, direcaoY * forca, raio_solar.x, raio_solar.y)
+        local direcaoX = earth.x - sun_particle.x
+        local direcaoY = earth.y - sun_particle.y
+        sun_particle:applyForce(direcaoX * forca, direcaoY * forca, sun_particle.x, sun_particle.y)
     else
-        raio_solar:setLinearVelocity(0, 0)
+        sun_particle:setLinearVelocity(0, 0)
     end
 end
 
@@ -61,6 +60,7 @@ end
 function scene:create(event)
     local sceneGroup = self.view    
 
+    --Plano de fundo
     background = display.newImage('src/assets/images/page2BackGround.png', display.actualContentWidth, display
         .actualContentHeight)
     background.anchorX = 0
@@ -69,18 +69,21 @@ function scene:create(event)
     background.y = 0
     sceneGroup:insert(background)
 
+    --Texto de instrução
     local instructionsText = display.newImage('src/assets/texts/page8Instructions.png', display.actualContentWidth,
         display.actualContentHeight)
     instructionsText.x = display.contentWidth * 3 / 10
     instructionsText.y = display.contentHeight * 0.49
     sceneGroup:insert(instructionsText)
 
+    --Texto explicativo
     local text = display.newImage('src/assets/texts/page8Text.png', display.actualContentWidth,
         display.actualContentHeight)
     text.x = display.contentWidth * 5 / 10
     text.y = display.contentHeight * 0.2
     sceneGroup:insert(text)
 
+    --Sol
     sun = display.newImage('src/assets/images/sun.png', display.actualContentWidth,
         display.actualContentHeight)
     sun.x = display.contentWidth * 10 / 10
@@ -88,6 +91,7 @@ function scene:create(event)
     sun:scale(0.5, 0.5)
     sceneGroup:insert(sun)
 
+    --Terra
     earth = display.newImage('src/assets/images/earth2.png', display.actualContentWidth,
         display.actualContentHeight)
     earth.x = display.contentWidth * 2 / 10
@@ -95,13 +99,15 @@ function scene:create(event)
     earth:scale(0.7, 0.7)
     sceneGroup:insert(earth)
 
-    raio_solar = display.newImage('src/assets/images/raio_solar.png', display.actualContentWidth,
+    --Raio solar
+    sun_particle = display.newImage('src/assets/images/raio_solar.png', display.actualContentWidth,
         display.actualContentHeight)
-    raio_solar.x = display.contentWidth * 9 / 10
-    raio_solar.y = display.contentHeight * 0.6
-    raio_solar:scale(0.1, 0.1)
-    sceneGroup:insert(raio_solar)
+    sun_particle.x = display.contentWidth * 9 / 10
+    sun_particle.y = display.contentHeight * 0.6
+    sun_particle:scale(0.1, 0.1)
+    sceneGroup:insert(sun_particle)
 
+    --Limites da tela
     limit_left = display.newRect(-40, 0, 40, display.contentHeight)
     limit_left.anchorX = 0
     limit_left.anchorY = 0
@@ -122,6 +128,7 @@ function scene:create(event)
     limit_Up.anchorY = 0
     sceneGroup:insert(limit_Up)
 
+    --Botões de navegação
     backButton = display.newImage('src/assets/buttons/lightButtonLeft.png', display.contentWidth,
         display.contentWidth)
     backButton.x = display.contentWidth * 0.1
@@ -143,20 +150,22 @@ function scene:show(event)
         backButton.touch = onBackPage
         backButton:addEventListener("touch", backButton)
 
+        --Iniciar física
         physics.start()
         physics.setGravity(0, 0)
         physics.addBody(earth, "static", { density = 1.6, friction = 0.5, radius = 30 })
         physics.addBody(sun, "static", { density = 1.6, friction = 0.5, radius = 40 })
-        physics.addBody(raio_solar, "dinamic", { density = 1.6, radius = 20, bounce = 0.7 })
+        physics.addBody(sun_particle, "dinamic", { density = 1.6, radius = 20, bounce = 0.7 })
         physics.addBody(limit_left, "static", { density = 1.6, friction = 0.5, bounce = 0.2 })
         physics.addBody(limit_right, "static", { density = 1.6, friction = 0.5, bounce = 0.2 })
         physics.addBody(limit_bottom, "static", { density = 1.6, friction = 0.5, bounce = 0.2 })
         physics.addBody(limit_Up, "static", { density = 1.6, friction = 0.5, bounce = 0.2 })
 
+        --Adicionar eventos
         forwardButton.touch = onNextPage
         forwardButton:addEventListener("touch", forwardButton)
-        Runtime:addEventListener("accelerometer", moveMeteor)
-        Runtime:addEventListener("enterFrame", repelirMeteoro)
+        Runtime:addEventListener("accelerometer", moveParticle)
+        Runtime:addEventListener("enterFrame", repelirParticle)
     elseif (phase == "did") then
         
     end
@@ -167,14 +176,15 @@ function scene:hide(event)
     local phase = event.phase
 
     if (phase == "will") then
-        raio_solar.x = display.contentWidth * 9 / 10
-        raio_solar.y = display.contentHeight * 0.6
+        sun_particle.x = display.contentWidth * 9 / 10
+        sun_particle.y = display.contentHeight * 0.6
 
-        Runtime:removeEventListener("enterFrame", repelirMeteoro)
+        --Remover eventos
+        Runtime:removeEventListener("enterFrame", repelirParticle)
         backButton:removeEventListener("touch", backButton)
         forwardButton:removeEventListener("touch", forwardButton)
         background:removeEventListener("tap", background)
-        Runtime:removeEventListener("accelerometer", moveMeteor)
+        Runtime:removeEventListener("accelerometer", moveParticle)
         physics.stop()
         audio.stop()
     elseif (phase == "did") then

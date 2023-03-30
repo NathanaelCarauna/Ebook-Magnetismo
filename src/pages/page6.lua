@@ -2,6 +2,7 @@ local composer = require("composer")
 local physics = require("physics")
 local scene = composer.newScene()
 
+-- Variáveis de maior escopo
 local backButton
 local forwardButton
 local background
@@ -9,6 +10,7 @@ local limit_bottom
 local clip1, clip2, clip3, clip4, magnet
 local buttonSound
 
+--Opções de audio
 local buttonSoundOptions = {
     channel = 1,
     loops = 0,
@@ -17,6 +19,7 @@ local buttonSoundOptions = {
     onComplete = function() audio.dispose(buttonSound) end
 }
 
+--Voltar imagem
 local function onBackPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
         audio.play( buttonSound, buttonSoundOptions)
@@ -26,6 +29,7 @@ local function onBackPage(self, event)
     end
 end
 
+--Avançar imagem
 local function onNextPage(self, event)
     if event.phase == "ended" or event.phase == "cancelled" then
         audio.play( buttonSound, buttonSoundOptions)
@@ -35,6 +39,7 @@ local function onNextPage(self, event)
     end
 end
 
+--Arrastar objeto
 local function onDragObj(self, event)
     if event.phase == "began" then
         display.getCurrentStage():setFocus(self)
@@ -50,11 +55,12 @@ local function onDragObj(self, event)
     end
 end
 
+--Manter referencia dos linked joints
 local myJoint
 local prevLink = magnet
 local nextLink
 
--- //TODO Adicionar atração
+--Ao ima colidir com os clips, adicionar um joint
 local function onCollision(self, event)
     if event.phase == "began" then
         if (self.id == "magnet") then
@@ -76,6 +82,7 @@ function scene:create(event)
     local sceneGroup = self.view
     buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
 
+    --Plano de fundo
     background = display.newImage('src/assets/images/page6Background.png', display.actualContentWidth, display
         .actualContentHeight)
     background.anchorX = 0
@@ -84,18 +91,21 @@ function scene:create(event)
     background.y = 0
     sceneGroup:insert(background)
 
+    --Texto de instrução
     local instructionsText = display.newImage('src/assets/texts/page6Instructions.png', display.actualContentWidth,
         display.actualContentHeight)
     instructionsText.x = display.contentWidth * 0.4
     instructionsText.y = display.contentHeight * 0.48
     sceneGroup:insert(instructionsText)
 
+    --Texto explicativo
     local text = display.newImage('src/assets/texts/page6Text.png', display.actualContentWidth,
         display.actualContentHeight)
     text.x = display.contentWidth * 5 / 10
     text.y = display.contentHeight * 0.2
     sceneGroup:insert(text)
 
+    -- Imã
     magnet = display.newImage('src/assets/images/umagnet.png', display.actualContentWidth,
         display.actualContentHeight)
     magnet.id = "magnet"
@@ -103,6 +113,7 @@ function scene:create(event)
     magnet.y = display.contentHeight * 0.6
     sceneGroup:insert(magnet)
 
+    --Clips
     clip1 = display.newImage('src/assets/images/clip.png', display.actualContentWidth,
         display.actualContentHeight)
     clip1.id = "clip1"
@@ -131,6 +142,7 @@ function scene:create(event)
     clip4.y = display.contentHeight * 0.85
     sceneGroup:insert(clip4)
 
+    --Limites da tela
     limit_left = display.newRect(-40, 0, 40, display.contentHeight)
     limit_left.anchorX = 0
     limit_left.anchorY = 0
@@ -146,6 +158,7 @@ function scene:create(event)
     limit_bottom.anchorY = 0
     sceneGroup:insert(limit_bottom)
 
+    --Botões de navegação
     backButton = display.newImage('src/assets/buttons/blackButtonLeft.png', display.contentWidth,
         display.contentWidth)
     backButton.x = display.contentWidth * 0.1
@@ -166,8 +179,11 @@ function scene:show(event)
     if (phase == "will") then
         backButton.touch = onBackPage
         backButton:addEventListener("touch", backButton)
+
+        --Carregar audio
         buttonSound = audio.loadSound( "src/assets/sounds/click-button.mp3")
 
+        --Voltar para o estado inicial
         magnet.x = display.contentWidth * 0.5
         magnet.y = display.contentHeight * 0.6
         clip1.x = display.contentWidth * 0.2
@@ -181,6 +197,7 @@ function scene:show(event)
         prevLink = magnet
         myJoint = {}
 
+        --INiciar física
         physics.start()
         physics.addBody(magnet, "kinematic", { radius = 30 })
         physics.addBody(clip1, "dynamic", { radius = 20 })
@@ -191,6 +208,7 @@ function scene:show(event)
         physics.addBody(limit_left, "static", { density = 1.6, friction = 0.5, bounce = 0.2 })
         physics.addBody(limit_right, "static", { density = 1.6, friction = 0.5, bounce = 0.2 })
 
+        --Adicionar eventos
         forwardButton.touch = onNextPage
         forwardButton:addEventListener("touch", forwardButton)
         magnet.touch = onDragObj
@@ -216,6 +234,7 @@ function scene:hide(event)
     local phase = event.phase
 
     if (phase == "will") then
+        --Remover eventos
         backButton:removeEventListener("touch", backButton)
         forwardButton:removeEventListener("touch", forwardButton)
         background:removeEventListener("tap", background)
